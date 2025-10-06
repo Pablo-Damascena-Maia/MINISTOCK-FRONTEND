@@ -1,50 +1,28 @@
-# Welcome to your Expo app 👋
+🏪 MINISTOCK
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+MINISTOCK é um aplicativo móvel de gerenciamento de estoque desenvolvido com React Native, utilizando o framework Expo.
+O objetivo do app é permitir o controle prático e eficiente de produtos, movimentações e níveis de estoque, ideal para pequenos e médios negócios. 📦
 
-## Get started
+🚀 Funcionalidades Principais
 
-1. Install dependencies
+📦 Cadastro de Produtos: Adicione, edite e remova produtos com informações detalhadas como nome, código, quantidade e valor unitário.
 
-   ```bash
-   npm install
-   ```
+🔄 Movimentações de Estoque: Registre entradas e saídas de produtos e acompanhe o histórico completo de movimentações.
 
-2. Start the app
+📊 Relatórios e Indicadores: Visualize o saldo atual do estoque, produtos com baixo volume e movimentações recentes.
 
-   ```bash
-   npx expo start
-   ```
+🔔 Notificações Inteligentes: Receba alertas automáticos quando o estoque de um item atingir níveis mínimos definidos.
 
-In the output, you'll find options to open the app in a
+🎨 Interface Intuitiva: Layout limpo e responsivo com uso de StyleSheet e componentização para uma experiência fluida.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+🛠️ Tecnologias Utilizadas
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+React Native – Framework para desenvolvimento mobile multiplataforma
 
-## Get a fresh project
+Expo – Ferramenta para facilitar build, deploy e execução do app
 
-When you're ready, run:
+TypeScript – Tipagem estática e melhor manutenção de código
 
-```bash
-npm run reset-project
-```
+StyleSheet – Estilização modular e reutilizável
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Componentização – Estrutura organizada e escalável de componentes funcionais
