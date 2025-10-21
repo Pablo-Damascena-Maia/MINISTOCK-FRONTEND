@@ -49,3 +49,4 @@ O **MINISTOCK** aplica a seguinte regra de negócio principal:
 > Toda movimentação de estoque (entrada ou saída) deve atualizar automaticamente a **quantidade total do produto**, garantindo que **não haja saídas de itens com quantidade insuficiente**.  
 
 Essa lógica mantém a integridade dos dados e evita inconsistências no controle de estoque.  
+,
