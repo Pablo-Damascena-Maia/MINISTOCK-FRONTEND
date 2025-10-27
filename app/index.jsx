@@ -27,14 +27,14 @@ export default function HomeScreen() {
     {
       name: "Perecíveis",
       population: totalPereciveis,
-      color: "#FF6384",
+      color: "#da1d1dff",
       legendFontColor: "#333",
       legendFontSize: 12,
     },
     {
       name: "Não Perecíveis",
       population: totalNaoPereciveis,
-      color: "#FFCE56",
+      color: "#96741fff",
       legendFontColor: "#333",
       legendFontSize: 12,
     },
@@ -77,7 +77,7 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: "center", backgroundColor: "#f4f6f8", paddingTop: 50 },
+  container: { flex: 1, alignItems: "center", backgroundColor: "#b8b085ff", paddingTop: 50 },
   title: { fontSize: 22, fontWeight: "bold", marginBottom: 20 },
   buttonsContainer: { marginTop: 30, width: "100%", alignItems: "center" },
   button: {
