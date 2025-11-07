@@ -1,31 +1,28 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { useRouter } from 'expo-router';
 
-export default function EstoqueScreen() {
-  const router = useRouter();
-
+export default function EstoqueScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Gerenciar Estoques</Text>
 
       <TouchableOpacity
         style={[styles.button, { backgroundColor: '#0077cc' }]}
-        onPress={() => router.push('/BebidasScreen')}
+        onPress={() => navigation.navigate('Bebidas')}
       >
         <Text style={styles.buttonText}>🍹 Estoque de Bebidas</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
         style={[styles.button, { backgroundColor: '#28a745' }]}
-        onPress={() => router.push('/PereciveisScreen')}
+        onPress={() => navigation.navigate('Pereciveis')}
       >
         <Text style={styles.buttonText}>🥫 Itens Perecíveis</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
         style={[styles.button, { backgroundColor: '#ffc107' }]}
-        onPress={() => router.push('/NaoPereciveisScreen')}
+        onPress={() => navigation.navigate('NaoPereciveis')}
       >
         <Text style={styles.buttonText}>📦 Itens Não Perecíveis</Text>
       </TouchableOpacity>
