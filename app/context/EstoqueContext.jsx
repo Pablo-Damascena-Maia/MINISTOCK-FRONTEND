@@ -8,27 +8,77 @@ export function EstoqueProvider({ children }) {
   const [naoPereciveis, setNaoPereciveis] = useState([]);
   const [movimentacoes, setMovimentacoes] = useState([]);
 
-  function adicionarProduto(tipo, produto) {
-    if (tipo === 'bebidas') setBebidas(prev => [...prev, produto]);
-    if (tipo === 'pereciveis') setPereciveis(prev => [...prev, produto]);
-    if (tipo === 'naoPereciveis') setNaoPereciveis(prev => [...prev, produto]);
+  function getCategoriaSetter(categoria) {
+    switch (categoria) {
+      case 'bebidas':
+        return setBebidas;
+      case 'pereciveis':
+        return setPereciveis;
+      case 'naoPereciveis':
+        return setNaoPereciveis;
+      default:
+        return null;
+    }
+  }
+
+  function getCategoriaLista(categoria) {
+    switch (categoria) {
+      case 'bebidas':
+        return bebidas;
+      case 'pereciveis':
+        return pereciveis;
+      case 'naoPereciveis':
+        return naoPereciveis;
+      default:
+        return [];
+    }
+  }
+
+  function adicionarProduto(categoria, produto) {
+    const setCategoria = getCategoriaSetter(categoria);
+    if (!setCategoria) return;
+
+    setCategoria((prev) => {
+      const existe = prev.find((p) => p.nome === produto.nome);
+      if (existe) {
+        return prev.map((p) =>
+          p.nome === produto.nome
+            ? { ...p, quantidade: p.quantidade + produto.quantidade }
+            : p
+        );
+      }
+      return [...prev, produto];
+    });
   }
 
   function adicionarMovimentacao(mov) {
-    setMovimentacoes(prev => [...prev, mov]);
+    setMovimentacoes((prev) => [...prev, mov]);
 
-    const atualizarEstoque = (lista, setLista) => {
-      const idx = lista.findIndex(p => p.nome === mov.produto);
+    const setCategoria = getCategoriaSetter(mov.categoria);
+    const listaAtual = getCategoriaLista(mov.categoria);
+
+    if (!setCategoria) return;
+
+    setCategoria(() => {
+      const idx = listaAtual.findIndex((p) => p.nome === mov.produto);
+      let novaLista = [...listaAtual];
+
       if (idx !== -1) {
-        const atualizados = [...lista];
-        atualizados[idx].quantidade += mov.tipo === 'entrada' ? mov.quantidade : -mov.quantidade;
-        setLista(atualizados);
-      }
-    };
+        const atual = novaLista[idx];
+        let novaQuantidade =
+          mov.tipo === 'entrada'
+            ? atual.quantidade + mov.quantidade
+            : atual.quantidade - mov.quantidade;
 
-    if (mov.categoria === 'bebidas') atualizarEstoque(bebidas, setBebidas);
-    if (mov.categoria === 'pereciveis') atualizarEstoque(pereciveis, setPereciveis);
-    if (mov.categoria === 'naoPereciveis') atualizarEstoque(naoPereciveis, setNaoPereciveis);
+        if (novaQuantidade < 0) novaQuantidade = 0;
+
+        novaLista[idx] = { ...atual, quantidade: novaQuantidade };
+      } else if (mov.tipo === 'entrada') {
+        novaLista.push({ nome: mov.produto, quantidade: mov.quantidade });
+      }
+
+      return novaLista;
+    });
   }
 
   return (
@@ -48,9 +98,5 @@ export function EstoqueProvider({ children }) {
 }
 
 export function useEstoque() {
-  const context = useContext(EstoqueContext);
-  if (!context) {
-    throw new Error('useEstoque deve ser usado dentro de um EstoqueProvider');
-  }
-  return context;
+  return useContext(EstoqueContext);
 }

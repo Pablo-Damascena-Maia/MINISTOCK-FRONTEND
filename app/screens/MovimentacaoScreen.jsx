@@ -1,118 +1,136 @@
 import React, { useState } from 'react';
-import { View, Text, FlatList, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useEstoque } from '../context/EstoqueContext';
 
 export default function MovimentacaoScreen() {
-  const { movimentacoes, adicionarMovimentacao } = useEstoque();
-  const [tipo, setTipo] = useState('entrada');
+  const { adicionarMovimentacao } = useEstoque();
   const [produto, setProduto] = useState('');
   const [quantidade, setQuantidade] = useState('');
+  const [categoria, setCategoria] = useState('');
+  const [tipo, setTipo] = useState('');
 
-  const registrarMovimentacao = () => {
-    if (!produto || !quantidade) return alert('Preencha todos os campos');
-    adicionarMovimentacao({
-      tipo,
+  function handleMovimentar() {
+    if (!produto || !quantidade || !categoria || !tipo) {
+      Alert.alert('Erro', 'Preencha todos os campos.');
+      return;
+    }
+
+    const qtd = parseInt(quantidade);
+    if (isNaN(qtd) || qtd <= 0) {
+      Alert.alert('Erro', 'A quantidade deve ser um número positivo.');
+      return;
+    }
+
+    const movimentacao = {
       produto,
-      quantidade: parseInt(quantidade),
-      data: new Date().toLocaleString('pt-BR'),
-    });
+      quantidade: qtd,
+      tipo, // entrada ou saida
+      categoria, // bebidas, pereciveis, naoPereciveis
+      data: new Date().toLocaleString(),
+    };
+
+    adicionarMovimentacao(movimentacao);
+    Alert.alert('Sucesso', 'Movimentação registrada com sucesso!');
     setProduto('');
     setQuantidade('');
-  };
+    setCategoria('');
+    setTipo('');
+  }
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Movimentação de Estoque</Text>
 
-      <View style={styles.form}>
-        <TextInput
-          style={styles.input}
-          placeholder="Nome do produto"
-          value={produto}
-          onChangeText={setProduto}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Quantidade"
-          keyboardType="numeric"
-          value={quantidade}
-          onChangeText={setQuantidade}
-        />
-        <View style={styles.typeContainer}>
-          <TouchableOpacity
-            style={[styles.typeButton, tipo === 'entrada' && styles.activeButton]}
-            onPress={() => setTipo('entrada')}
-          >
-            <Text style={styles.typeText}>Entrada</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.typeButton, tipo === 'saida' && styles.activeButton]}
-            onPress={() => setTipo('saida')}
-          >
-            <Text style={styles.typeText}>Saída</Text>
-          </TouchableOpacity>
-        </View>
-        <TouchableOpacity style={styles.addButton} onPress={registrarMovimentacao}>
-          <Text style={styles.addButtonText}>Registrar</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Nome do Produto"
+        value={produto}
+        onChangeText={setProduto}
+      />
+
+      <TextInput
+        style={styles.input}
+        placeholder="Quantidade"
+        keyboardType="numeric"
+        value={quantidade}
+        onChangeText={setQuantidade}
+      />
+
+      <Text style={styles.label}>Categoria:</Text>
+      <View style={styles.row}>
+        <TouchableOpacity
+          style={[styles.option, categoria === 'bebidas' && styles.selected]}
+          onPress={() => setCategoria('bebidas')}
+        >
+          <Text style={styles.optionText}>Bebidas</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.option, categoria === 'pereciveis' && styles.selected]}
+          onPress={() => setCategoria('pereciveis')}
+        >
+          <Text style={styles.optionText}>Perecíveis</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.option, categoria === 'naoPereciveis' && styles.selected]}
+          onPress={() => setCategoria('naoPereciveis')}
+        >
+          <Text style={styles.optionText}>Não Perecíveis</Text>
         </TouchableOpacity>
       </View>
 
-      <Text style={styles.subtitle}>Histórico de Movimentações</Text>
-      <FlatList
-        data={movimentacoes.slice().reverse()}
-        keyExtractor={(_, index) => index.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.item}>
-            <Text style={styles.itemText}>
-              {item.tipo === 'entrada' ? '📦 Entrada' : '📤 Saída'} — {item.produto} ({item.quantidade})
-            </Text>
-            <Text style={styles.date}>{item.data}</Text>
-          </View>
-        )}
-      />
+      <Text style={styles.label}>Tipo de Movimentação:</Text>
+      <View style={styles.row}>
+        <TouchableOpacity
+          style={[styles.option, tipo === 'entrada' && styles.selectedEntrada]}
+          onPress={() => setTipo('entrada')}
+        >
+          <Text style={styles.optionText}>Entrada</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.option, tipo === 'saida' && styles.selectedSaida]}
+          onPress={() => setTipo('saida')}
+        >
+          <Text style={styles.optionText}>Saída</Text>
+        </TouchableOpacity>
+      </View>
+
+      <TouchableOpacity style={styles.button} onPress={handleMovimentar}>
+        <Text style={styles.buttonText}>Registrar Movimentação</Text>
+      </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: '#f4f6fa' },
-  title: { fontSize: 22, fontWeight: 'bold', color: '#003366', marginBottom: 10 },
-  subtitle: { fontSize: 18, fontWeight: '600', color: '#003366', marginVertical: 10 },
-  form: { marginBottom: 20 },
+  container: { flex: 1, backgroundColor: '#fff', padding: 20 },
+  title: { fontSize: 22, fontWeight: 'bold', color: '#003366', marginBottom: 20, textAlign: 'center' },
   input: {
-    backgroundColor: '#fff',
-    padding: 10,
-    borderRadius: 8,
-    marginVertical: 5,
     borderWidth: 1,
     borderColor: '#ccc',
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 15,
   },
-  typeContainer: { flexDirection: 'row', justifyContent: 'space-between', marginVertical: 10 },
-  typeButton: {
+  label: { fontWeight: 'bold', marginBottom: 5, color: '#003366' },
+  row: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 15 },
+  option: {
     flex: 1,
-    backgroundColor: '#ccc',
-    padding: 10,
-    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 10,
     marginHorizontal: 5,
+    padding: 10,
     alignItems: 'center',
   },
-  activeButton: { backgroundColor: '#003366' },
-  typeText: { color: '#fff', fontWeight: 'bold' },
-  addButton: {
-    backgroundColor: '#0066cc',
-    padding: 12,
-    borderRadius: 8,
+  selected: { backgroundColor: '#3498db' },
+  selectedEntrada: { backgroundColor: '#2ecc71' },
+  selectedSaida: { backgroundColor: '#e74c3c' },
+  optionText: { color: '#fff', fontWeight: 'bold' },
+  button: {
+    backgroundColor: '#003366',
+    padding: 15,
+    borderRadius: 10,
     alignItems: 'center',
   },
-  addButtonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
-  item: {
-    backgroundColor: '#fff',
-    padding: 12,
-    borderRadius: 8,
-    marginVertical: 5,
-    borderLeftWidth: 5,
-    borderLeftColor: '#003366',
-  },
-  itemText: { fontSize: 16, fontWeight: '500' },
-  date: { fontSize: 12, color: '#666' },
+  buttonText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
 });

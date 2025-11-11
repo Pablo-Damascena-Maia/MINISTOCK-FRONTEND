@@ -1,97 +1,106 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet } from "react-native";
-import { useRouter } from "expo-router";
-import { useEstoque } from "../context/EstoqueContext";
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
+import { useEstoque } from '../context/EstoqueContext';
 
 export default function PereciveisScreen() {
-  const { pereciveis, adicionarProduto, removerProduto } = useEstoque();
-  const [nome, setNome] = useState("");
-  const [preco, setPreco] = useState("");
-  const [quantidade, setQuantidade] = useState("");
-  const router = useRouter();
+  const { pereciveis, adicionarProduto } = useEstoque();
+  const [nome, setNome] = useState('');
+  const [quantidade, setQuantidade] = useState('');
+  const [preco, setPreco] = useState('');
 
-  const handleAdd = () => {
-    if (!nome || !preco || !quantidade) return;
-    const novo = {
-      id: Date.now().toString(),
+  function adicionarBebida() {
+    if (!nome || !quantidade || !preco) return;
+    adicionarProduto('pereciveis', {
       nome,
-      preco: parseFloat(preco),
-      quantidade: parseInt(quantidade),
-    };
-    adicionarProduto("pereciveis", novo);
-    setNome("");
-    setPreco("");
-    setQuantidade("");
-  };
+      quantidade: Number(quantidade),
+      preco: Number(preco),
+    });
+    setNome('');
+    setQuantidade('');
+    setPreco('');
+  }
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Estoque de Pereciveis</Text>
 
-      <TextInput style={styles.input} placeholder="Nome" value={nome} onChangeText={setNome} />
-      <TextInput
-        style={styles.input}
-        placeholder="Preço"
-        keyboardType="numeric"
-        value={preco}
-        onChangeText={setPreco}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Quantidade"
-        keyboardType="numeric"
-        value={quantidade}
-        onChangeText={setQuantidade}
-      />
+      <View style={styles.form}>
+        <TextInput
+          style={styles.input}
+          placeholder="Nome do Perecivel"
+          value={nome}
+          onChangeText={setNome}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Quantidade"
+          keyboardType="numeric"
+          value={quantidade}
+          onChangeText={setQuantidade}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Preço (R$)"
+          keyboardType="numeric"
+          value={preco}
+          onChangeText={setPreco}
+        />
+        <TouchableOpacity style={styles.button} onPress={adicionarBebida}>
+          <Text style={styles.buttonText}>Adicionar Pereciveis</Text>
+        </TouchableOpacity>
+      </View>
 
-      <TouchableOpacity style={styles.addButton} onPress={handleAdd}>
-        <Text style={styles.addButtonText}>Adicionar Produto</Text>
-      </TouchableOpacity>
+      <Text style={styles.subtitle}>Lista de Pereciveis</Text>
 
-      <FlatList
-        data={pereciveis}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.item}>
-            <Text style={styles.itemText}>
-              {item.nome} — {item.quantidade} un. — R$ {item.preco.toFixed(2)}
-            </Text>
-            <TouchableOpacity onPress={() => removerProduto("pereciveis", item.id)}>
-              <Text style={styles.delete}>🗑️</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      />
-
-      <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-        <Text style={styles.backButtonText}>⬅ Voltar</Text>
-      </TouchableOpacity>
+      {pereciveis.length === 0 ? (
+        <Text style={styles.emptyText}>Nenhuma bebida cadastrada.</Text>
+      ) : (
+        <FlatList
+          data={pereciveis}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item }) => (
+            <View style={styles.card}>
+              <Text style={styles.produtoNome}>{item.nome}</Text>
+              <Text style={styles.produtoQtd}>Quantidade: {item.quantidade}</Text>
+              <Text style={styles.produtoPreco}>Preço: R$ {item.preco?.toFixed(2) || '0.00'}</Text>
+            </View>
+          )}
+          contentContainerStyle={{ paddingBottom: 100 }}
+        />
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: "#b8b085ff" },
-  title: { fontSize: 22, fontWeight: "bold", marginBottom: 20, textAlign: "center" },
-  input: { borderWidth: 1, borderColor: "#ccc", borderRadius: 8, padding: 10, marginBottom: 10 },
-  addButton: {
-    backgroundColor: "#007bff",
+  container: { flex: 1, backgroundColor: '#F8FAFC', padding: 20 },
+  title: { fontSize: 24, fontWeight: 'bold', color: '#003366', textAlign: 'center', marginBottom: 20 },
+  form: { marginBottom: 25 },
+  input: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
     padding: 12,
-    borderRadius: 8,
-    alignItems: "center",
-    marginBottom: 20,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#ddd',
   },
-  addButtonText: { color: "#fff", fontWeight: "bold" },
-  item: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    padding: 12,
-    backgroundColor: "#f2f2f2",
-    borderRadius: 8,
-    marginBottom: 8,
+  button: {
+    backgroundColor: '#3498db',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
   },
-  itemText: { fontSize: 16 },
-  delete: { fontSize: 18 },
-  backButton: { marginTop: 20, alignSelf: "center", backgroundColor: "#ddd", padding: 10, borderRadius: 8 },
-  backButtonText: { fontWeight: "bold" },
+  buttonText: { color: '#fff', fontWeight: 'bold' },
+  subtitle: { fontSize: 18, fontWeight: '600', color: '#333', marginBottom: 10 },
+  card: {
+    backgroundColor: '#fff',
+    padding: 15,
+    borderRadius: 12,
+    marginBottom: 10,
+    elevation: 2,
+  },
+  produtoNome: { fontSize: 16, fontWeight: 'bold', color: '#003366' },
+  produtoQtd: { fontSize: 14, color: '#555' },
+  produtoPreco: { fontSize: 14, color: '#27ae60' },
+  emptyText: { textAlign: 'center', color: '#888', marginTop: 20 },
 });
