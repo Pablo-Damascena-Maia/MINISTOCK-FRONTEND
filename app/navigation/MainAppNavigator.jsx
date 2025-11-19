@@ -17,26 +17,10 @@ const Stack = createNativeStackNavigator();
 function EstoqueStack() {
   return (
     <Stack.Navigator>
-      <Stack.Screen
-        name="EstoquePrincipal"
-        component={EstoqueScreen}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="Bebidas"
-        component={BebidasScreen}
-        options={{ title: 'Estoque de Bebidas' }}
-      />
-      <Stack.Screen
-        name="Pereciveis"
-        component={PereciveisScreen}
-        options={{ title: 'Itens Perecíveis' }}
-      />
-      <Stack.Screen
-        name="NaoPereciveis"
-        component={NaoPereciveisScreen}
-        options={{ title: 'Itens Não Perecíveis' }}
-      />
+      <Stack.Screen name="EstoquePrincipal" component={EstoqueScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="Bebidas" component={BebidasScreen} />
+      <Stack.Screen name="Pereciveis" component={PereciveisScreen} />
+      <Stack.Screen name="NaoPereciveis" component={NaoPereciveisScreen} />
     </Stack.Navigator>
   );
 }
@@ -49,25 +33,12 @@ export default function MainAppNavigator() {
         tabBarStyle: { backgroundColor: '#003366', height: 60 },
         tabBarActiveTintColor: '#fff',
         tabBarInactiveTintColor: '#ccc',
-        tabBarLabelStyle: { fontSize: 12, marginBottom: 4 },
         tabBarIcon: ({ color, size }) => {
-          let iconName;
-          switch (route.name) {
-            case 'Início':
-              iconName = 'home-outline';
-              break;
-            case 'Dashboard':
-              iconName = 'stats-chart-outline';
-              break;
-            case 'Estoque':
-              iconName = 'cube-outline';
-              break;
-            case 'Movimentação':
-              iconName = 'swap-horizontal-outline';
-              break;
-            default:
-              iconName = 'ellipse-outline';
-          }
+          let iconName = 'home-outline';
+          if (route.name === 'Início') iconName = 'home-outline';
+          if (route.name === 'Dashboard') iconName = 'stats-chart-outline';
+          if (route.name === 'Estoque') iconName = 'cube-outline';
+          if (route.name === 'Movimentação') iconName = 'swap-horizontal-outline';
           return <Ionicons name={iconName} size={size} color={color} />;
         },
       })}

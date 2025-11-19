@@ -1,66 +1,42 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { criarUsuario } from '../services/usuarioService';
+import { api } from '../services/api'; // optional if you have auth endpoint
+import { useEstoque } from '../context/EstoqueContext';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [erro, setErro] = useState('');
 
-  const handleLogin = async () => {
+  async function handleLogin() {
     if (!email || !senha) {
       setErro('Preencha todos os campos.');
       return;
     }
-
     try {
-      const dadosSalvos = await AsyncStorage.getItem('usuario');
-
-      if (!dadosSalvos) {
-        setErro('Nenhum usuário cadastrado.');
-        return;
-      }
-
-      const usuario = JSON.parse(dadosSalvos);
-
-      if (usuario.email === email && usuario.senha === senha) {
-        setErro('');
-        navigation.replace('MainApp');
-      } else {
-        setErro('Email ou senha incorretos.');
-      }
+      // Exemplo: POST /auth/login -> retorna token
+      // Se seu backend não tiver auth, use AsyncStorage local flow
+      const res = await api.post('/auth/login', { email, senha }); // ajuste se necessário
+      const token = res.data.token;
+      await AsyncStorage.setItem('token', token);
+      setErro('');
+      navigation.replace('MainApp');
     } catch (e) {
-      setErro('Erro ao tentar fazer login.');
+      // fallback: se não existir rota auth, você pode usar usuário salvo localmente
+      console.warn(e);
+      setErro('Email ou senha incorretos.');
     }
-  };
+  }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Bem-vindo ao MiniStock</Text>
+      <Text style={styles.title}>MiniStock - Login</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        placeholderTextColor="#aaa"
-        value={email}
-        onChangeText={(t) => {
-          setEmail(t);
-          setErro('');
-        }}
-        keyboardType="email-address"
-      />
+      <TextInput style={styles.input} placeholder="Email" value={email} onChangeText={(t) => { setEmail(t); setErro(''); }} keyboardType="email-address" />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Senha"
-        placeholderTextColor="#aaa"
-        secureTextEntry
-        value={senha}
-        onChangeText={(t) => {
-          setSenha(t);
-          setErro('');
-        }}
-      />
+      <TextInput style={styles.input} placeholder="Senha" secureTextEntry value={senha} onChangeText={(t) => { setSenha(t); setErro(''); }} />
 
       {erro !== '' && <Text style={styles.erro}>{erro}</Text>}
 
@@ -76,47 +52,11 @@ export default function LoginScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#003366',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  title: {
-    color: '#fff',
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 40,
-  },
-  input: {
-    width: '100%',
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 15,
-    marginBottom: 10,
-  },
-  erro: {
-    color: '#ff6666',
-    marginBottom: 15,
-    textAlign: 'center',
-    fontWeight: 'bold',
-  },
-  button: {
-    width: '100%',
-    backgroundColor: '#007bff',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  link: {
-    marginTop: 20,
-    color: '#fff',
-    textDecorationLine: 'underline',
-  },
+  container: { flex: 1, backgroundColor: '#003366', alignItems: 'center', justifyContent: 'center', padding: 20 },
+  title: { color: '#fff', fontSize: 24, fontWeight: 'bold', marginBottom: 30 },
+  input: { width: '100%', backgroundColor: '#fff', borderRadius: 8, padding: 12, marginBottom: 12 },
+  erro: { color: '#ff6666', marginBottom: 12, fontWeight: 'bold' },
+  button: { width: '100%', backgroundColor: '#007bff', padding: 12, borderRadius: 8, alignItems: 'center', marginBottom: 12 },
+  buttonText: { color: '#fff', fontWeight: 'bold' },
+  link: { color: '#fff', textDecorationLine: 'underline', marginTop: 8 },
 });

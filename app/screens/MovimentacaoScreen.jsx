@@ -1,212 +1,93 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, FlatList } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, Alert } from 'react-native';
+import { criarMovimentacao, listarMovimentacoes } from '../services/movimentacaoService';
 import { useEstoque } from '../context/EstoqueContext';
 
 export default function MovimentacaoScreen() {
-  const { bebidas, pereciveis, naoPereciveis, adicionarMovimentacao } = useEstoque();
+  const { movimentacoes, adicionarMovimentacaoLocal, carregarMovimentacoesDoServidor } = useEstoque();
   const [produto, setProduto] = useState('');
   const [quantidade, setQuantidade] = useState('');
-  const [preco, setPreco] = useState('');
-  const [categoria, setCategoria] = useState('');
-  const [tipo, setTipo] = useState('');
-  const [historico, setHistorico] = useState([]);
+  const [categoria, setCategoria] = useState('bebidas');
+  const [tipo, setTipo] = useState('entrada');
 
-  function getListaPorCategoria(cat) {
-    switch (cat) {
-      case 'bebidas': return bebidas;
-      case 'pereciveis': return pereciveis;
-      case 'naoPereciveis': return naoPereciveis;
-      default: return [];
-    }
-  }
+  useEffect(() => {
+    carregarMovimentacoesDoServidor();
+  }, []);
 
-  function handleMovimentar() {
+  async function handleRegistrar() {
     if (!produto || !quantidade || !categoria || !tipo) {
-      Alert.alert('Erro', 'Preencha todos os campos obrigatórios.');
+      Alert.alert('Erro', 'Preencha todos os campos.');
       return;
     }
-
-    const qtd = parseInt(quantidade);
+    const qtd = Number(quantidade);
     if (isNaN(qtd) || qtd <= 0) {
-      Alert.alert('Erro', 'A quantidade deve ser um número positivo.');
+      Alert.alert('Erro', 'Quantidade inválida.');
       return;
     }
-
-    // Busca produto no estoque da categoria
-    const listaAtual = getListaPorCategoria(categoria);
-    const produtoExistente = listaAtual.find(p => p.nome === produto);
-
-    const antes = produtoExistente ? produtoExistente.quantidade : 0;
-    const precoAtual = produtoExistente ? produtoExistente.preco || 0 : 0;
-
-    // Se não preencher o preço, mantém o do estoque
-    const valor = preco ? parseFloat(preco) : precoAtual;
-
-    if (isNaN(valor) || valor < 0) {
-      Alert.alert('Erro', 'O preço deve ser um número válido.');
-      return;
-    }
-
-    const depois =
-      tipo === 'entrada'
-        ? antes + qtd
-        : Math.max(0, antes - qtd);
-
-    const mov = {
-      produto,
+    const payload = {
+      produto: produto,
       quantidade: qtd,
-      preco: valor,
-      tipo,
       categoria,
-      antes,
-      depois,
-      data: new Date().toLocaleString(),
+      tipo,
+      data: new Date().toISOString(),
     };
 
-    adicionarMovimentacao(mov);
-    setHistorico((prev) => [mov, ...prev]);
-
-    Alert.alert('Sucesso', 'Movimentação registrada com sucesso!');
-    setProduto('');
-    setQuantidade('');
-    setPreco('');
-    setCategoria('');
-    setTipo('');
+    try {
+      await criarMovimentacao(payload); // envia ao backend
+      adicionarMovimentacaoLocal({ ...payload, data: new Date().toLocaleString() }); // atualiza local
+      setProduto(''); setQuantidade('');
+      Alert.alert('Sucesso', 'Movimentação registrada.');
+    } catch (e) {
+      console.warn(e);
+      Alert.alert('Erro', 'Não foi possível registrar movimentação.');
+    }
   }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Movimentação de Estoque</Text>
+      <Text style={styles.title}>Movimentações</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Nome do Produto"
-        value={produto}
-        onChangeText={setProduto}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Quantidade"
-        keyboardType="numeric"
-        value={quantidade}
-        onChangeText={setQuantidade}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Preço (R$) — opcional"
-        keyboardType="numeric"
-        value={preco}
-        onChangeText={setPreco}
-      />
+      <TextInput style={styles.input} placeholder="Nome do produto" value={produto} onChangeText={setProduto} />
+      <TextInput style={styles.input} placeholder="Quantidade" value={quantidade} onChangeText={setQuantidade} keyboardType="numeric" />
 
-      <Text style={styles.label}>Categoria:</Text>
       <View style={styles.row}>
-        {['bebidas', 'pereciveis', 'naoPereciveis'].map((cat) => (
-          <TouchableOpacity
-            key={cat}
-            style={[styles.option, categoria === cat && styles.selected]}
-            onPress={() => setCategoria(cat)}
-          >
-            <Text style={styles.optionText}>
-              {cat === 'bebidas' ? 'Bebidas' : cat === 'pereciveis' ? 'Perecíveis' : 'Não Perecíveis'}
-            </Text>
-          </TouchableOpacity>
-        ))}
+        <TouchableOpacity style={[styles.option, categoria === 'bebidas' && styles.selected]} onPress={() => setCategoria('bebidas')}><Text style={styles.optText}>Bebidas</Text></TouchableOpacity>
+        <TouchableOpacity style={[styles.option, categoria === 'pereciveis' && styles.selected]} onPress={() => setCategoria('pereciveis')}><Text style={styles.optText}>Perecíveis</Text></TouchableOpacity>
+        <TouchableOpacity style={[styles.option, categoria === 'naoPereciveis' && styles.selected]} onPress={() => setCategoria('naoPereciveis')}><Text style={styles.optText}>Não Perecíveis</Text></TouchableOpacity>
       </View>
 
-      <Text style={styles.label}>Tipo de Movimentação:</Text>
       <View style={styles.row}>
-        {['entrada', 'saida'].map((t) => (
-          <TouchableOpacity
-            key={t}
-            style={[
-              styles.option,
-              tipo === t && (t === 'entrada' ? styles.selectedEntrada : styles.selectedSaida),
-            ]}
-            onPress={() => setTipo(t)}
-          >
-            <Text style={styles.optionText}>{t === 'entrada' ? 'Entrada' : 'Saída'}</Text>
-          </TouchableOpacity>
-        ))}
+        <TouchableOpacity style={[styles.option, tipo === 'entrada' && styles.selectedEntrada]} onPress={() => setTipo('entrada')}><Text style={styles.optText}>Entrada</Text></TouchableOpacity>
+        <TouchableOpacity style={[styles.option, tipo === 'saida' && styles.selectedSaida]} onPress={() => setTipo('saida')}><Text style={styles.optText}>Saída</Text></TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={styles.button} onPress={handleMovimentar}>
-        <Text style={styles.buttonText}>Registrar Movimentação</Text>
-      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={handleRegistrar}><Text style={styles.btnText}>Registrar</Text></TouchableOpacity>
 
-      <Text style={styles.subtitle}>Histórico de Movimentações</Text>
-      {historico.length === 0 ? (
-        <Text style={styles.emptyText}>Nenhuma movimentação registrada.</Text>
-      ) : (
-        <FlatList
-          data={historico}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => (
-            <View style={styles.card}>
-              <Text style={styles.produtoNome}>{item.produto}</Text>
-              <Text>Categoria: {item.categoria}</Text>
-              <Text>Tipo: {item.tipo.toUpperCase()}</Text>
-              <Text>Preço: R$ {item.preco.toFixed(2)}</Text>
-              <Text>Antes: {item.antes}</Text>
-              <Text>
-                {item.tipo === 'entrada'
-                  ? `Entrou: +${item.quantidade}`
-                  : `Saiu: -${item.quantidade}`}
-              </Text>
-              <Text>Depois: {item.depois}</Text>
-              <Text style={styles.data}>{item.data}</Text>
-            </View>
-          )}
-        />
-      )}
+      <Text style={styles.sub}>Histórico</Text>
+      <FlatList data={movimentacoes.slice().reverse()} keyExtractor={(item, i) => i.toString()} renderItem={({ item }) => (
+        <View style={[styles.movItem, item.tipo === 'entrada' ? { borderLeftColor: '#2ecc71' } : { borderLeftColor: '#e74c3c' }]}>
+          <Text style={styles.movText}>{item.tipo === 'entrada' ? '📦 Entrada' : '📤 Saída'} — {item.produto} ({item.quantidade})</Text>
+          <Text style={styles.movDate}>{item.data ? new Date(item.data).toLocaleString() : ''}</Text>
+        </View>
+      )} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F8FAFC', padding: 20 },
-  title: { fontSize: 24, fontWeight: 'bold', color: '#003366', textAlign: 'center', marginBottom: 20 },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 15,
-    backgroundColor: '#fff',
-  },
-  label: { fontWeight: 'bold', marginBottom: 5, color: '#003366' },
-  row: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 15 },
-  option: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 10,
-    marginHorizontal: 5,
-    padding: 10,
-    alignItems: 'center',
-    backgroundColor: '#003366',
-  },
-  selected: { backgroundColor: '#2282c2ff' },
-  selectedEntrada: { backgroundColor: '#2282c2ff' },
-  selectedSaida: { backgroundColor: '#2282c2ff' },
-  optionText: { color: '#fff', fontWeight: 'bold' },
-  button: {
-    backgroundColor: '#003366',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  buttonText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
-  subtitle: { fontSize: 18, fontWeight: '600', color: '#333', marginBottom: 10 },
-  card: {
-    backgroundColor: '#fff',
-    padding: 15,
-    borderRadius: 12,
-    marginBottom: 10,
-    elevation: 2,
-  },
-  produtoNome: { fontSize: 16, fontWeight: 'bold', color: '#003366' },
-  data: { fontSize: 12, color: '#888', marginTop: 5 },
-  emptyText: { textAlign: 'center', color: '#888', marginTop: 20 },
+  container: { flex: 1, padding: 16, backgroundColor: '#fff' },
+  title: { fontSize: 22, fontWeight: 'bold', color: '#003366', marginBottom: 10 },
+  input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 10, marginBottom: 10 },
+  row: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 },
+  option: { flex: 1, marginHorizontal: 4, padding: 10, borderRadius: 8, borderWidth: 1, borderColor: '#ccc', alignItems: 'center' },
+  selected: { backgroundColor: '#3498db' },
+  selectedEntrada: { backgroundColor: '#2ecc71' },
+  selectedSaida: { backgroundColor: '#e74c3c' },
+  optText: { color: '#fff', fontWeight: 'bold' },
+  button: { backgroundColor: '#003366', padding: 12, borderRadius: 8, alignItems: 'center', marginBottom: 12 },
+  btnText: { color: '#fff', fontWeight: 'bold' },
+  sub: { fontSize: 18, fontWeight: '600', marginVertical: 8, color: '#333' },
+  movItem: { padding: 12, backgroundColor: '#f7f7f7', borderRadius: 8, marginBottom: 8, borderLeftWidth: 6 },
+  movText: { fontSize: 16 },
+  movDate: { color: '#666', fontSize: 12, marginTop: 6 },
 });

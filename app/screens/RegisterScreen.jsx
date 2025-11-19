@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { criarUsuario } from '../services/usuarioService';
 
 export default function RegisterScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -8,7 +8,7 @@ export default function RegisterScreen({ navigation }) {
   const [confirmar, setConfirmar] = useState('');
   const [erro, setErro] = useState('');
 
-  const handleRegister = async () => {
+  async function handleRegister() {
     if (!email || !senha || !confirmar) {
       setErro('Preencha todos os campos.');
       return;
@@ -17,56 +17,25 @@ export default function RegisterScreen({ navigation }) {
       setErro('As senhas não coincidem.');
       return;
     }
-
     try {
-      const novoUsuario = { email, senha };
-      await AsyncStorage.setItem('usuario', JSON.stringify(novoUsuario));
+      await criarUsuario({ email, senha });
       setErro('');
       navigation.replace('Login');
     } catch (e) {
-      setErro('Erro ao salvar os dados.');
+      console.warn(e);
+      setErro('Erro ao cadastrar.');
     }
-  };
+  }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Crie sua conta</Text>
+      <Text style={styles.title}>Criar conta</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        placeholderTextColor="#aaa"
-        value={email}
-        onChangeText={(t) => {
-          setEmail(t);
-          setErro('');
-        }}
-        keyboardType="email-address"
-      />
+      <TextInput style={styles.input} placeholder="Email" value={email} onChangeText={(t) => { setEmail(t); setErro(''); }} keyboardType="email-address" />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Senha"
-        placeholderTextColor="#aaa"
-        secureTextEntry
-        value={senha}
-        onChangeText={(t) => {
-          setSenha(t);
-          setErro('');
-        }}
-      />
+      <TextInput style={styles.input} placeholder="Senha" secureTextEntry value={senha} onChangeText={(t) => { setSenha(t); setErro(''); }} />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Confirmar senha"
-        placeholderTextColor="#aaa"
-        secureTextEntry
-        value={confirmar}
-        onChangeText={(t) => {
-          setConfirmar(t);
-          setErro('');
-        }}
-      />
+      <TextInput style={styles.input} placeholder="Confirmar senha" secureTextEntry value={confirmar} onChangeText={(t) => { setConfirmar(t); setErro(''); }} />
 
       {erro !== '' && <Text style={styles.erro}>{erro}</Text>}
 
@@ -82,47 +51,11 @@ export default function RegisterScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#003366',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  title: {
-    color: '#fff',
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 40,
-  },
-  input: {
-    width: '100%',
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 15,
-    marginBottom: 10,
-  },
-  erro: {
-    color: '#ff6666',
-    marginBottom: 15,
-    textAlign: 'center',
-    fontWeight: 'bold',
-  },
-  button: {
-    width: '100%',
-    backgroundColor: '#007bff',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  link: {
-    marginTop: 20,
-    color: '#fff',
-    textDecorationLine: 'underline',
-  },
+  container: { flex: 1, backgroundColor: '#003366', alignItems: 'center', justifyContent: 'center', padding: 20 },
+  title: { color: '#fff', fontSize: 24, fontWeight: 'bold', marginBottom: 30 },
+  input: { width: '100%', backgroundColor: '#fff', borderRadius: 8, padding: 12, marginBottom: 12 },
+  erro: { color: '#ff6666', marginBottom: 12, fontWeight: 'bold' },
+  button: { width: '100%', backgroundColor: '#007bff', padding: 12, borderRadius: 8, alignItems: 'center', marginBottom: 12 },
+  buttonText: { color: '#fff', fontWeight: 'bold' },
+  link: { color: '#fff', textDecorationLine: 'underline', marginTop: 8 },
 });

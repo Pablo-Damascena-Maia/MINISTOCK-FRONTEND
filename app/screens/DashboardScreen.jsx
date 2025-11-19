@@ -1,110 +1,45 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import React, { useMemo } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 import { useEstoque } from '../context/EstoqueContext';
 import { PieChart } from 'react-native-chart-kit';
+import { Dimensions } from 'react-native';
 
 export default function DashboardScreen() {
-  const { bebidas, pereciveis, naoPereciveis } = useEstoque();
+  const { bebidas, pereciveis, naoPereciveis, movimentacoes } = useEstoque();
 
-  const total =
-    bebidas.length + pereciveis.length + naoPereciveis.length || 0;
+  const bebidasCount = bebidas?.reduce((s, p) => s + (p.quantidade || 0), 0) || 0;
+  const pereciveisCount = pereciveis?.reduce((s, p) => s + (p.quantidade || 0), 0) || 0;
+  const naoPereciveisCount = naoPereciveis?.reduce((s, p) => s + (p.quantidade || 0), 0) || 0;
 
-  const data = [
-    {
-      name: 'Bebidas',
-      population: bebidas.length,
-      color: '#3498db',
-      legendFontColor: '#333',
-      legendFontSize: 14,
-    },
-    {
-      name: 'Perecíveis',
-      population: pereciveis.length,
-      color: '#e74c3c',
-      legendFontColor: '#333',
-      legendFontSize: 14,
-    },
-    {
-      name: 'Não Perecíveis',
-      population: naoPereciveis.length,
-      color: '#2ecc71',
-      legendFontColor: '#333',
-      legendFontSize: 14,
-    },
-  ];
+  const total = bebidasCount + pereciveisCount + naoPereciveisCount || 1;
+
+  const data = useMemo(() => [
+    { name: 'Bebidas', population: bebidasCount, color: '#3498db', legendFontColor: '#333', legendFontSize: 12 },
+    { name: 'Perecíveis', population: pereciveisCount, color: '#e74c3c', legendFontColor: '#333', legendFontSize: 12 },
+    { name: 'Não Perecíveis', population: naoPereciveisCount, color: '#2ecc71', legendFontColor: '#333', legendFontSize: 12 },
+  ], [bebidasCount, pereciveisCount, naoPereciveisCount]);
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Dashboard do Estoque</Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>Dashboard</Text>
 
-      <PieChart
-        data={data}
-        width={350}
-        height={220}
-        chartConfig={{
-          backgroundColor: '#fff',
-          color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-        }}
-        accessor="population"
-        backgroundColor="transparent"
-        paddingLeft="15"
-      />
+      <PieChart data={data} width={Dimensions.get('window').width - 40} height={220} chartConfig={{
+        backgroundGradientFrom: '#fff', backgroundGradientTo: '#fff', color: (opacity = 1) => `rgba(0,0,0,${opacity})`
+      }} accessor="population" backgroundColor="transparent" paddingLeft="15" />
 
-      <View style={styles.statsContainer}>
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Total de Itens</Text>
-          <Text style={styles.cardValue}>{total}</Text>
-        </View>
-
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Bebidas</Text>
-          <Text style={styles.cardValue}>{bebidas.length}</Text>
-        </View>
-
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Perecíveis</Text>
-          <Text style={styles.cardValue}>{pereciveis.length}</Text>
-        </View>
-
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Não Perecíveis</Text>
-          <Text style={styles.cardValue}>{naoPereciveis.length}</Text>
-        </View>
+      <View style={styles.cards}>
+        <View style={styles.card}><Text style={styles.cardTitle}>Total itens</Text><Text style={styles.cardValue}>{total}</Text></View>
+        <View style={styles.card}><Text style={styles.cardTitle}>Entradas/saídas</Text><Text style={styles.cardValue}>{movimentacoes.length}</Text></View>
       </View>
-    </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    backgroundColor: '#f8f9fa',
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginVertical: 20,
-    color: '#003366',
-  },
-  statsContainer: {
-    width: '100%',
-    marginTop: 20,
-  },
-  card: {
-    backgroundColor: '#fff',
-    padding: 20,
-    marginVertical: 8,
-    borderRadius: 10,
-    elevation: 3,
-  },
-  cardTitle: {
-    fontSize: 16,
-    color: '#333',
-  },
-  cardValue: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#003366',
-  },
+  container: { flex: 1, padding: 16, backgroundColor: '#f5f6fa', alignItems: 'center' },
+  title: { fontSize: 22, fontWeight: 'bold', color: '#003366', marginBottom: 10 },
+  cards: { width: '100%', marginTop: 20 },
+  card: { backgroundColor: '#fff', padding: 16, borderRadius: 10, marginBottom: 10 },
+  cardTitle: { color: '#333' },
+  cardValue: { fontSize: 20, fontWeight: 'bold', color: '#003366' },
 });

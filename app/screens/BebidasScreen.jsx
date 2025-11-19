@@ -1,106 +1,57 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
 import { useEstoque } from '../context/EstoqueContext';
+import { criarProduto, listarProdutos } from '../services/produtoService';
 
 export default function BebidasScreen() {
-  const { bebidas, adicionarProduto } = useEstoque();
+  const { bebidas, adicionarProdutoLocal, carregarProdutosDoServidor } = useEstoque();
   const [nome, setNome] = useState('');
   const [quantidade, setQuantidade] = useState('');
   const [preco, setPreco] = useState('');
 
-  function adicionarBebida() {
-    if (!nome || !quantidade || !preco) return;
-    adicionarProduto('bebidas', {
-      nome,
-      quantidade: Number(quantidade),
-      preco: Number(preco),
-    });
-    setNome('');
-    setQuantidade('');
-    setPreco('');
+  useEffect(() => {
+    carregarProdutosDoServidor();
+  }, []);
+
+  async function handleAdd() {
+    if (!nome || !quantidade) return;
+    try {
+      const produtoPayload = { nome, quantidade: Number(quantidade), preco: Number(preco || 0), categoria: 'bebidas' };
+      await criarProduto(produtoPayload); // cria no backend
+      adicionarProdutoLocal('bebidas', produtoPayload); // atualiza local
+      setNome(''); setQuantidade(''); setPreco('');
+    } catch (e) {
+      console.warn(e);
+    }
   }
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Estoque de Bebidas</Text>
 
-      <View style={styles.form}>
-        <TextInput
-          style={styles.input}
-          placeholder="Nome da bebida"
-          value={nome}
-          onChangeText={setNome}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Quantidade"
-          keyboardType="numeric"
-          value={quantidade}
-          onChangeText={setQuantidade}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Preço (R$)"
-          keyboardType="numeric"
-          value={preco}
-          onChangeText={setPreco}
-        />
-        <TouchableOpacity style={styles.button} onPress={adicionarBebida}>
-          <Text style={styles.buttonText}>Adicionar Bebida</Text>
-        </TouchableOpacity>
-      </View>
+      <TextInput style={styles.input} placeholder="Nome" value={nome} onChangeText={setNome} />
+      <TextInput style={styles.input} placeholder="Quantidade" value={quantidade} onChangeText={setQuantidade} keyboardType="numeric" />
+      <TextInput style={styles.input} placeholder="Preço" value={preco} onChangeText={setPreco} keyboardType="numeric" />
 
-      <Text style={styles.subtitle}>Lista de Bebidas</Text>
+      <TouchableOpacity style={styles.addButton} onPress={handleAdd}>
+        <Text style={styles.addButtonText}>Adicionar Produto</Text>
+      </TouchableOpacity>
 
-      {bebidas.length === 0 ? (
-        <Text style={styles.emptyText}>Nenhuma bebida cadastrada.</Text>
-      ) : (
-        <FlatList
-          data={bebidas}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => (
-            <View style={styles.card}>
-              <Text style={styles.produtoNome}>{item.nome}</Text>
-              <Text style={styles.produtoQtd}>Quantidade: {item.quantidade}</Text>
-              <Text style={styles.produtoPreco}>Preço: R$ {item.preco?.toFixed(2) || '0.00'}</Text>
-            </View>
-          )}
-          contentContainerStyle={{ paddingBottom: 100 }}
-        />
-      )}
+      <FlatList data={bebidas} keyExtractor={(item) => item.id?.toString() || item.nome} renderItem={({ item }) => (
+        <View style={styles.item}>
+          <Text style={styles.itemText}>{item.nome} — {item.quantidade} un. — R$ {(item.preco ?? 0).toFixed(2)}</Text>
+        </View>
+      )} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F8FAFC', padding: 20 },
-  title: { fontSize: 24, fontWeight: 'bold', color: '#003366', textAlign: 'center', marginBottom: 20 },
-  form: { marginBottom: 25 },
-  input: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 10,
-    borderWidth: 1,
-    borderColor: '#ddd',
-  },
-  button: {
-    backgroundColor: '#3498db',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  buttonText: { color: '#fff', fontWeight: 'bold' },
-  subtitle: { fontSize: 18, fontWeight: '600', color: '#333', marginBottom: 10 },
-  card: {
-    backgroundColor: '#fff',
-    padding: 15,
-    borderRadius: 12,
-    marginBottom: 10,
-    elevation: 2,
-  },
-  produtoNome: { fontSize: 16, fontWeight: 'bold', color: '#003366' },
-  produtoQtd: { fontSize: 14, color: '#555' },
-  produtoPreco: { fontSize: 14, color: '#27ae60' },
-  emptyText: { textAlign: 'center', color: '#888', marginTop: 20 },
+  container: { flex: 1, padding: 16, backgroundColor: '#fff' },
+  title: { fontSize: 20, fontWeight: 'bold', color: '#003366', marginBottom: 10 },
+  input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 10, marginBottom: 8 },
+  addButton: { backgroundColor: '#0077cc', padding: 12, borderRadius: 8, alignItems: 'center', marginBottom: 12 },
+  addButtonText: { color: '#fff', fontWeight: 'bold' },
+  item: { padding: 10, backgroundColor: '#f2f2f2', borderRadius: 8, marginBottom: 8 },
+  itemText: { fontSize: 16 },
 });

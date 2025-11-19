@@ -1,4 +1,6 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { listarProdutos } from '../services/produtoService';
+import { listarMovimentacoes } from '../services/movimentacaoService';
 
 const EstoqueContext = createContext();
 
@@ -7,6 +9,7 @@ export function EstoqueProvider({ children }) {
   const [pereciveis, setPereciveis] = useState([]);
   const [naoPereciveis, setNaoPereciveis] = useState([]);
   const [movimentacoes, setMovimentacoes] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   function getCategoriaSetter(categoria) {
     switch (categoria) {
@@ -20,7 +23,6 @@ export function EstoqueProvider({ children }) {
         return null;
     }
   }
-
   function getCategoriaLista(categoria) {
     switch (categoria) {
       case 'bebidas':
@@ -34,49 +36,91 @@ export function EstoqueProvider({ children }) {
     }
   }
 
-  function adicionarProduto(categoria, produto) {
+  // Carrega produtos do backend e separa por categoria
+  async function carregarProdutosDoServidor() {
+    try {
+      setLoading(true);
+      const res = await listarProdutos();
+      const lista = res.data || [];
+      const b = [];
+      const p = [];
+      const np = [];
+
+      lista.forEach((prod) => {
+        const item = {
+          id: prod.id ?? prod.produtoId ?? Date.now().toString(),
+          nome: prod.nome ?? prod.descricao ?? 'Produto',
+          quantidade: typeof prod.quantidade === 'number' ? prod.quantidade : Number(prod.quantidade) || 0,
+          preco: prod.preco ?? prod.valor ?? 0,
+          categoria: prod.categoria ?? prod.categoriaProduto ?? 'naoPereciveis',
+        };
+        const cat = item.categoria.toLowerCase();
+        if (cat.includes('bebida')) b.push(item);
+        else if (cat.includes('pereci')) p.push(item);
+        else np.push(item);
+      });
+
+      setBebidas(b);
+      setPereciveis(p);
+      setNaoPereciveis(np);
+    } catch (e) {
+      console.warn('Erro ao carregar produtos:', e);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function carregarMovimentacoesDoServidor() {
+    try {
+      const res = await listarMovimentacoes();
+      const list = res.data || [];
+      setMovimentacoes(list);
+    } catch (e) {
+      console.warn('Erro carregar movs:', e);
+    }
+  }
+
+  useEffect(() => {
+    // carrega inicialmente do backend
+    carregarProdutosDoServidor();
+    carregarMovimentacoesDoServidor();
+  }, []);
+
+  // adicionar produto localmente (usado ao criar produto no app)
+  function adicionarProdutoLocal(categoria, produto) {
     const setCategoria = getCategoriaSetter(categoria);
     if (!setCategoria) return;
-
     setCategoria((prev) => {
       const existe = prev.find((p) => p.nome === produto.nome);
       if (existe) {
         return prev.map((p) =>
-          p.nome === produto.nome
-            ? { ...p, quantidade: p.quantidade + produto.quantidade }
-            : p
+          p.nome === produto.nome ? { ...p, quantidade: p.quantidade + produto.quantidade } : p
         );
       }
       return [...prev, produto];
     });
   }
 
-  function adicionarMovimentacao(mov) {
+  // adicionar movimentação e atualizar estoque localmente (sincroniza com backend via services nas telas)
+  function adicionarMovimentacaoLocal(mov) {
     setMovimentacoes((prev) => [...prev, mov]);
 
     const setCategoria = getCategoriaSetter(mov.categoria);
     const listaAtual = getCategoriaLista(mov.categoria);
-
     if (!setCategoria) return;
 
     setCategoria(() => {
       const idx = listaAtual.findIndex((p) => p.nome === mov.produto);
-      let novaLista = [...listaAtual];
-
+      const novaLista = [...listaAtual];
       if (idx !== -1) {
         const atual = novaLista[idx];
         let novaQuantidade =
-          mov.tipo === 'entrada'
-            ? atual.quantidade + mov.quantidade
-            : atual.quantidade - mov.quantidade;
-
+          mov.tipo === 'entrada' ? atual.quantidade + mov.quantidade : atual.quantidade - mov.quantidade;
         if (novaQuantidade < 0) novaQuantidade = 0;
-
         novaLista[idx] = { ...atual, quantidade: novaQuantidade };
       } else if (mov.tipo === 'entrada') {
-        novaLista.push({ nome: mov.produto, quantidade: mov.quantidade });
+        novaLista.push({ id: Date.now().toString(), nome: mov.produto, quantidade: mov.quantidade, categoria: mov.categoria });
       }
-
       return novaLista;
     });
   }
@@ -88,8 +132,11 @@ export function EstoqueProvider({ children }) {
         pereciveis,
         naoPereciveis,
         movimentacoes,
-        adicionarProduto,
-        adicionarMovimentacao,
+        loading,
+        carregarProdutosDoServidor,
+        carregarMovimentacoesDoServidor,
+        adicionarProdutoLocal,
+        adicionarMovimentacaoLocal,
       }}
     >
       {children}
@@ -98,5 +145,9 @@ export function EstoqueProvider({ children }) {
 }
 
 export function useEstoque() {
-  return useContext(EstoqueContext);
+  const ctx = useContext(EstoqueContext);
+  if (!ctx) {
+    throw new Error('useEstoque deve ser usado dentro de EstoqueProvider');
+  }
+  return ctx;
 }
