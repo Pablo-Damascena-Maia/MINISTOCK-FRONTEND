@@ -4,6 +4,10 @@ import API from "./api";
 export function criarUsuario(data) {
   return API.post("/api/usuario/criar", data);
 }
+// Criar email (cadastro)
+export function emailUsuario(data) {
+  return API.post("/api/usuario/email", data);
+}
 
 // Atualizar usuário
 export function atualizarUsuario(data) {

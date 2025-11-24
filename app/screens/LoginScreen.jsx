@@ -18,7 +18,7 @@ export default function LoginScreen({ navigation }) {
     try {
       // Exemplo: POST /auth/login -> retorna token
       // Se seu backend não tiver auth, use AsyncStorage local flow
-      const res = await api.post('/auth/login', { email, senha }); // ajuste se necessário
+      const res = await api.post('/api/usuario/email', { email, senha }); // Sim eu estou logando com email
       const token = res.data.token;
       await AsyncStorage.setItem('token', token);
       setErro('');

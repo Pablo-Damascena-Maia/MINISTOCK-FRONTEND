@@ -2,7 +2,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API = axios.create({
-  baseURL: "http://http://academico3.rj.senac.br/ministock:8484", // <- coloque aqui seu IP ou URL do backend
+  baseURL: "http://http://academico3.rj.senac.br/ministock:8404", // <- coloque aqui seu IP ou URL do backend
   headers: { 'Content-Type': 'application/json' },
   timeout: 10000,
 });
