@@ -1,7 +1,5 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import api from '../../services/api';
 import { useAuth } from '../context/AuthContext';
 
 export default function LoginScreen({ navigation }) {
@@ -9,7 +7,7 @@ export default function LoginScreen({ navigation }) {
   const [senha, setSenha] = useState('');
   const [erro, setErro] = useState('');
 
-  const { setAutenticado } = useAuth();
+  const { login } = useAuth();
 
   async function handleLogin() {
     if (!email || !senha) {
@@ -17,31 +15,12 @@ export default function LoginScreen({ navigation }) {
       return;
     }
 
-    try {
-      // ---- LOGIN COM O SEU ENDPOINT ----
-      const res = await api.post('/api/usuario/email', {
-        email: email,
-        senha: senha
-      });
+    const resultado = await login(email, senha);
 
-      if (!res.data || !res.data.token) {
-        setErro("Backend não retornou token.");
-        return;
-      }
-
-      const token = res.data.token;
-
-      // salva token
-      await AsyncStorage.setItem("token", token);
-
-      //setAutenticado(true);
+    if (resultado.sucesso) {
       setErro('');
-
-      navigation.replace("MainApp");
-
-    } catch (error) {
-      console.log(error);
-      setErro('Email ou senha incorretos.');
+    } else {
+      setErro(resultado.erro || 'Email ou senha incorretos.');
     }
   }
 

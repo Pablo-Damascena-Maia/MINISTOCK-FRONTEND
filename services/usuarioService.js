@@ -21,7 +21,7 @@ export async function criarUsuario({ nome, email, senha }) {
   };
 
   try {
-    const response = await API.post("/api/usuario/criar", payload);
+    const response = await api.post("/api/usuario/criar", payload);
     return response.data;
   } catch (error) {
     console.log("Erro registrar:", error.response?.data || error);

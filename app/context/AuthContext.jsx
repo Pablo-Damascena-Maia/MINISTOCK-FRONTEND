@@ -70,5 +70,3 @@ export function AuthProvider({ children }) {
   );
 }
 
-// 👇 **ADICIONE ISTO**
-export default AuthProvider;
