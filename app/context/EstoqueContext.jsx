@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { listarProdutos } from '../services/produtoService';
-import { listarMovimentacoes } from '../services/movimentacaoService';
+import { listarMovimentacoes } from '../../services/movimentacaoService';
+import { listarProdutos } from '../../services/produtoService';
 
 const EstoqueContext = createContext();
 
@@ -151,3 +151,5 @@ export function useEstoque() {
   }
   return ctx;
 }
+export default EstoqueProvider;
+

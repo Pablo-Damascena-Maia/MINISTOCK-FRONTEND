@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, Alert } from 'react-native';
-import { criarMovimentacao, listarMovimentacoes } from '../services/movimentacaoService';
+import React, { useEffect, useState } from 'react';
+import { Alert, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { criarMovimentacao } from '../../services/movimentacaoService';
 import { useEstoque } from '../context/EstoqueContext';
 
 export default function MovimentacaoScreen() {

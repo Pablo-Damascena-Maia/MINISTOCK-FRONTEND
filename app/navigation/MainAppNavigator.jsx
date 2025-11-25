@@ -1,15 +1,14 @@
-import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import HomeScreen from '../index';
+import BebidasScreen from '../screens/BebidasScreen';
 import DashboardScreen from '../screens/DashboardScreen';
 import EstoqueScreen from '../screens/EstoqueScreen';
-import BebidasScreen from '../screens/BebidasScreen';
-import PereciveisScreen from '../screens/PereciveisScreen';
-import NaoPereciveisScreen from '../screens/NaoPereciveisScreen';
 import MovimentacaoScreen from '../screens/MovimentacaoScreen';
+import NaoPereciveisScreen from '../screens/NaoPereciveisScreen';
+import PereciveisScreen from '../screens/PereciveisScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();

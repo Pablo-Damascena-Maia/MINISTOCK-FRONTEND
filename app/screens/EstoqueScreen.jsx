@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useEstoque } from '../context/EstoqueContext';
-import { produtoService } from '../services/produtoService';
 
 export default function EstoqueScreen({ navigation }) {
   const { bebidas, pereciveis, naoPereciveis, carregarProdutosDoServidor } = useEstoque();

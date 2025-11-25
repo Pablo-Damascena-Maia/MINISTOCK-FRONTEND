@@ -1,24 +1,27 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import { criarUsuario } from '../services/usuarioService';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { criarUsuario } from '../../services/usuarioService';
 
 export default function RegisterScreen({ navigation }) {
+  const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [confirmar, setConfirmar] = useState('');
   const [erro, setErro] = useState('');
 
   async function handleRegister() {
-    if (!email || !senha || !confirmar) {
+    if (!nome || !email || !senha || !confirmar) {
       setErro('Preencha todos os campos.');
       return;
     }
+
     if (senha !== confirmar) {
       setErro('As senhas não coincidem.');
       return;
     }
+
     try {
-      await criarUsuario({ email, senha });
+      await criarUsuario({ nome, email, senha });
       setErro('');
       navigation.replace('Login');
     } catch (e) {
@@ -31,11 +34,36 @@ export default function RegisterScreen({ navigation }) {
     <View style={styles.container}>
       <Text style={styles.title}>Criar conta</Text>
 
-      <TextInput style={styles.input} placeholder="Email" value={email} onChangeText={(t) => { setEmail(t); setErro(''); }} keyboardType="email-address" />
+      <TextInput
+        style={styles.input}
+        placeholder="Nome"
+        value={nome}
+        onChangeText={(t) => { setNome(t); setErro(''); }}
+      />
 
-      <TextInput style={styles.input} placeholder="Senha" secureTextEntry value={senha} onChangeText={(t) => { setSenha(t); setErro(''); }} />
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        value={email}
+        keyboardType="email-address"
+        onChangeText={(t) => { setEmail(t); setErro(''); }}
+      />
 
-      <TextInput style={styles.input} placeholder="Confirmar senha" secureTextEntry value={confirmar} onChangeText={(t) => { setConfirmar(t); setErro(''); }} />
+      <TextInput
+        style={styles.input}
+        placeholder="Senha"
+        secureTextEntry
+        value={senha}
+        onChangeText={(t) => { setSenha(t); setErro(''); }}
+      />
+
+      <TextInput
+        style={styles.input}
+        placeholder="Confirmar senha"
+        secureTextEntry
+        value={confirmar}
+        onChangeText={(t) => { setConfirmar(t); setErro(''); }}
+      />
 
       {erro !== '' && <Text style={styles.erro}>{erro}</Text>}
 

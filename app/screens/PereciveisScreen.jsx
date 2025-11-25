@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
+import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { criarProduto } from '../../services/produtoService';
 import { useEstoque } from '../context/EstoqueContext';
-import { criarProduto } from '../services/produtoService';
 
 export default function PereciveisScreen() {
   const { pereciveis, adicionarProdutoLocal, carregarProdutosDoServidor } = useEstoque();
