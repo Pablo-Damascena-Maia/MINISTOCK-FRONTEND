@@ -1,13 +1,14 @@
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 
-export default function LoginScreen({ navigation }) {
+export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [erro, setErro] = useState('');
-
   const { login } = useAuth();
+  const router = useRouter();
 
   async function handleLogin() {
     if (!email || !senha) {
@@ -19,6 +20,7 @@ export default function LoginScreen({ navigation }) {
 
     if (resultado.sucesso) {
       setErro('');
+      router.replace('/(tabs)');
     } else {
       setErro(resultado.erro || 'Email ou senha incorretos.');
     }
@@ -50,7 +52,7 @@ export default function LoginScreen({ navigation }) {
         <Text style={styles.buttonText}>Entrar</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+      <TouchableOpacity onPress={() => router.push('/(auth)/register')}>
         <Text style={styles.link}>Não tem conta? Cadastre-se</Text>
       </TouchableOpacity>
     </View>

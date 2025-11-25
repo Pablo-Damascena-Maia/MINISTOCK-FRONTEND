@@ -1,13 +1,16 @@
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { criarUsuario } from '../../services/usuarioService';
+import { useAuth } from '../context/AuthContext';
 
-export default function RegisterScreen({ navigation }) {
+export default function RegisterScreen() {
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [confirmar, setConfirmar] = useState('');
   const [erro, setErro] = useState('');
+  const { register } = useAuth();
+  const router = useRouter();
 
   async function handleRegister() {
     if (!nome || !email || !senha || !confirmar) {
@@ -20,13 +23,13 @@ export default function RegisterScreen({ navigation }) {
       return;
     }
 
-    try {
-      await criarUsuario({ nome, email, senha });
+    const resultado = await register({ nome, email, senha });
+
+    if (resultado.sucesso) {
       setErro('');
-      navigation.replace('Login');
-    } catch (e) {
-      console.warn(e);
-      setErro('Erro ao cadastrar.');
+      router.replace('/(auth)/login');
+    } else {
+      setErro(resultado.erro || 'Erro ao cadastrar.');
     }
   }
 
@@ -71,7 +74,7 @@ export default function RegisterScreen({ navigation }) {
         <Text style={styles.buttonText}>Cadastrar</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+      <TouchableOpacity onPress={() => router.push('/(auth)/login')}>
         <Text style={styles.link}>Já tem conta? Entrar</Text>
       </TouchableOpacity>
     </View>

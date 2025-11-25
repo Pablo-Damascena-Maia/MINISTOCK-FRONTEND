@@ -1,9 +1,17 @@
-import React from 'react';
+import { useRouter } from 'expo-router';
+import React, { useEffect } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { useAuth } from './context/AuthContext';
+import { useAuth } from '../context/AuthContext';
 
 export default function HomeScreen() {
-  const { logout } = useAuth();
+  const { logout, autenticado } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!autenticado) {
+      router.replace('/(auth)/login');
+    }
+  }, [autenticado]);
 
   return (
     <View style={styles.container}>

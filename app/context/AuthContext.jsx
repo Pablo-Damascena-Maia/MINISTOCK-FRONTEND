@@ -45,6 +45,7 @@ export function AuthProvider({ children }) {
 
   async function logout() {
     await AsyncStorage.removeItem("token");
+    delete api.defaults.headers.Authorization;
     setAutenticado(false);
   }
 
@@ -69,4 +70,6 @@ export function AuthProvider({ children }) {
     </AuthContext.Provider>
   );
 }
+
+export default AuthProvider;
 
