@@ -39,7 +39,7 @@ export default function PereciveisScreen() {
         nome: product.nome || '',
         descricao: product.descricao || '',
         quantidadeEstoque: String(product.quantidade || product.quantidadeEstoque || ''),
-        codigoBarras: product.codigoBarras || '',
+
 
       });
     } else {
@@ -49,7 +49,7 @@ export default function PereciveisScreen() {
         nome: '',
         descricao: '',
         quantidadeEstoque: '',
-        codigoBarras: '',
+
 
       });
     }
@@ -73,7 +73,7 @@ export default function PereciveisScreen() {
         nome: formData.nome,
         descricao: formData.descricao,
         quantidadeEstoque: parseInt(formData.quantidadeEstoque) || 0,
-        codigoBarras: formData.codigoBarras,
+        codigoBarras: '',
         imagemUrl: '',
         ativo: true,
         status: 1,
@@ -129,9 +129,7 @@ export default function PereciveisScreen() {
           <Text style={styles.cardQuantity}>
             Quantidade: {item.quantidade || item.quantidadeEstoque || 0}
           </Text>
-          {item.codigoBarras ? (
-            <Text style={styles.cardBarcode}>Cód: {item.codigoBarras}</Text>
-          ) : null}
+
         </View>
         <View style={styles.cardActions}>
           <TouchableOpacity
@@ -228,12 +226,7 @@ export default function PereciveisScreen() {
               keyboardType="numeric"
             />
 
-            <TextInput
-              style={styles.input}
-              placeholder="Código de Barras"
-              value={formData.codigoBarras}
-              onChangeText={(text) => setFormData({ ...formData, codigoBarras: text })}
-            />
+
 
 
 

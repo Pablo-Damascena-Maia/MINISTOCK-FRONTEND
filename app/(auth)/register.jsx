@@ -23,7 +23,7 @@ export default function RegisterScreen() {
       return;
     }
 
-    const resultado = await register({ nome, email, senha });
+    const resultado = await register({ nome, email, senha, ativo: true, status: 1 });
 
     if (resultado.sucesso) {
       setErro('');
