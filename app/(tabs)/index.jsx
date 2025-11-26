@@ -16,24 +16,30 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <Ionicons name="cube-outline" size={80} color="#003366" style={styles.logo} />
-      <Text style={styles.title}>MiniStock</Text>
-      <Text style={styles.subtitle}>Seu Sistema de Gerenciamento de Estoque</Text>
+      <View style={styles.header}>
+        <Ionicons name="cube-outline" size={40} color="#fff" />
+        <Text style={styles.titleHeader}>MiniStock</Text>
+        <Text style={styles.subtitleHeader}>Seu Sistema de Gerenciamento de Estoque</Text>
+      </View>
 
-      <View style={styles.infoBox}>
-        <Text style={styles.infoText}>Use as abas abaixo para navegar:</Text>
-        <View style={styles.infoItem}>
-          <Ionicons name="stats-chart-outline" size={18} color="#003366" style={{ marginRight: 8 }} />
-          <Text style={styles.infoTextItem}>Dashboard - Visualize estatísticas</Text>
-        </View>
-        <View style={styles.infoItem}>
-          <Ionicons name="cube-outline" size={18} color="#003366" style={{ marginRight: 8 }} />
-          <Text style={styles.infoTextItem}>Estoque - Gerencie produtos</Text>
-        </View>
-        <View style={styles.infoItem}>
-          <Ionicons name="swap-horizontal-outline" size={18} color="#003366" style={{ marginRight: 8 }} />
-          <Text style={styles.infoTextItem}>Movimentação - Registre entradas/saídas</Text>
-        </View>
+      <View style={styles.cardsContainer}>
+        <TouchableOpacity style={[styles.card, { backgroundColor: '#0077cc' }]} onPress={() => router.push('/dashboard')}>
+          <Ionicons name="stats-chart-outline" size={40} color="#fff" />
+          <Text style={styles.cardTitle}>Dashboard</Text>
+          <Text style={styles.cardSubtitle}>Visualize estatísticas e relatórios</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={[styles.card, { backgroundColor: '#28a745' }]} onPress={() => router.push('/estoque')}>
+          <Ionicons name="cube-outline" size={40} color="#fff" />
+          <Text style={styles.cardTitle}>Estoque</Text>
+          <Text style={styles.cardSubtitle}>Gerencie produtos por categoria</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={[styles.card, { backgroundColor: '#ffc107' }]} onPress={() => router.push('/movimentacao')}>
+          <Ionicons name="swap-horizontal-outline" size={40} color="#fff" />
+          <Text style={styles.cardTitle}>Movimentação</Text>
+          <Text style={styles.cardSubtitle}>Registre entradas e saídas</Text>
+        </TouchableOpacity>
       </View>
 
       <TouchableOpacity style={styles.logoutButton} onPress={logout}>
@@ -48,59 +54,61 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f6fa',
+  },
+  header: {
+    backgroundColor: '#003366',
+    padding: 30,
+    paddingTop: 60,
     alignItems: 'center',
-    justifyContent: 'center',
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
+    marginBottom: 20,
+  },
+  titleHeader: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginTop: 10,
+  },
+  subtitleHeader: {
+    fontSize: 16,
+    color: '#ccc',
+    marginTop: 5,
+  },
+  cardsContainer: {
+    flex: 1,
     padding: 20,
   },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#003366',
-    marginBottom: 10,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 30,
-  },
-  infoBox: {
-    backgroundColor: '#fff',
+  card: {
     padding: 20,
     borderRadius: 10,
-    width: '90%',
-    marginBottom: 20,
+    marginBottom: 15,
+    alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.2,
     shadowRadius: 4,
-    elevation: 3,
+    elevation: 4,
   },
-  infoText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#003366',
-    marginBottom: 15,
+  cardTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginTop: 10,
   },
-  infoTextItem: {
+  cardSubtitle: {
     fontSize: 14,
-    color: '#555',
+    color: '#eee',
+    marginTop: 5,
   },
-  logo: {
-    marginBottom: 20,
-  },
-  infoItem: {
-    fontSize: 14,
-    color: '#555',
-    marginLeft: 10,
-    marginBottom: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
+
+
   logoutButton: {
     backgroundColor: '#dc3545',
     padding: 12,
     borderRadius: 8,
-    width: '90%',
+    marginHorizontal: 20,
+    marginBottom: 20,
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'center',

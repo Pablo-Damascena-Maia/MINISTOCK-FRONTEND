@@ -28,7 +28,7 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>MiniStock - Login</Text>
+	      <Text style={styles.title}>Bem-vindo ao MiniStock</Text>
 
       <TextInput
         style={styles.input}
@@ -62,14 +62,14 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#003366',
+    backgroundColor: '#f5f6fa', // Fundo claro do app
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20
   },
   title: {
-    color: '#fff',
-    fontSize: 24,
+    color: '#003366', // Cor primária do app
+    fontSize: 28,
     fontWeight: 'bold',
     marginBottom: 30
   },
@@ -78,7 +78,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 8,
     padding: 12,
-    marginBottom: 12
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#ccc',
   },
   erro: {
     color: '#ff6666',
@@ -87,7 +89,7 @@ const styles = StyleSheet.create({
   },
   button: {
     width: '100%',
-    backgroundColor: '#007bff',
+    backgroundColor: '#003366', // Cor primária do app
     padding: 12,
     borderRadius: 8,
     alignItems: 'center',
@@ -98,7 +100,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   link: {
-    color: '#fff',
+    color: '#0077cc', // Cor de link do app
     textDecorationLine: 'underline',
     marginTop: 8
   }

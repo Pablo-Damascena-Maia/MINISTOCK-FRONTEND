@@ -61,14 +61,14 @@ export default function MovimentacaoScreen() {
       <TextInput style={styles.input} placeholder="Quantidade" value={quantidade} onChangeText={setQuantidade} keyboardType="numeric" />
 
       <View style={styles.row}>
-	      <TouchableOpacity style={[styles.option, categoriaId === 1 && styles.selected]} onPress={() => setCategoriaId(1)}><Text style={styles.optText}>Bebidas</Text></TouchableOpacity>
-	      <TouchableOpacity style={[styles.option, categoriaId === 2 && styles.selected]} onPress={() => setCategoriaId(2)}><Text style={styles.optText}>Perecíveis</Text></TouchableOpacity>
-	      <TouchableOpacity style={[styles.option, categoriaId === 3 && styles.selected]} onPress={() => setCategoriaId(3)}><Text style={styles.optText}>Não Perecíveis</Text></TouchableOpacity>
+	      <TouchableOpacity style={[styles.option, categoriaId === 1 && styles.selected]} onPress={() => setCategoriaId(1)}><Text style={[styles.optText, categoriaId === 1 && { color: '#fff' }]}>Bebidas</Text></TouchableOpacity>
+	      <TouchableOpacity style={[styles.option, categoriaId === 2 && styles.selected]} onPress={() => setCategoriaId(2)}><Text style={[styles.optText, categoriaId === 2 && { color: '#fff' }]}>Perecíveis</Text></TouchableOpacity>
+	      <TouchableOpacity style={[styles.option, categoriaId === 3 && styles.selected]} onPress={() => setCategoriaId(3)}><Text style={[styles.optText, categoriaId === 3 && { color: '#fff' }]}>Não Perecíveis</Text></TouchableOpacity>
       </View>
 
       <View style={styles.row}>
-        <TouchableOpacity style={[styles.option, tipo === 'entrada' && styles.selectedEntrada]} onPress={() => setTipo('entrada')}><Text style={styles.optText}>Entrada</Text></TouchableOpacity>
-        <TouchableOpacity style={[styles.option, tipo === 'saida' && styles.selectedSaida]} onPress={() => setTipo('saida')}><Text style={styles.optText}>Saída</Text></TouchableOpacity>
+	        <TouchableOpacity style={[styles.option, tipo === 'entrada' && styles.selectedEntrada]} onPress={() => setTipo('entrada')}><Text style={[styles.optText, tipo === 'entrada' && { color: '#fff' }]}>Entrada</Text></TouchableOpacity>
+	        <TouchableOpacity style={[styles.option, tipo === 'saida' && styles.selectedSaida]} onPress={() => setTipo('saida')}><Text style={[styles.optText, tipo === 'saida' && { color: '#fff' }]}>Saída</Text></TouchableOpacity>
       </View>
 
       <TouchableOpacity style={styles.button} onPress={handleRegistrar}><Text style={styles.btnText}>Registrar</Text></TouchableOpacity>
@@ -89,11 +89,11 @@ const styles = StyleSheet.create({
   title: { fontSize: 22, fontWeight: 'bold', color: '#003366', marginBottom: 10 },
   input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 10, marginBottom: 10 },
   row: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 },
-  option: { flex: 1, marginHorizontal: 4, padding: 10, borderRadius: 8, borderWidth: 1, borderColor: '#ccc', alignItems: 'center' },
-  selected: { backgroundColor: '#3498db' },
+  option: { flex: 1, marginHorizontal: 4, padding: 10, borderRadius: 8, borderWidth: 1, borderColor: '#ccc', alignItems: 'center', backgroundColor: '#eee' },
+  selected: { backgroundColor: '#0077cc' },
   selectedEntrada: { backgroundColor: '#2ecc71' },
   selectedSaida: { backgroundColor: '#e74c3c' },
-  optText: { color: '#fff', fontWeight: 'bold' },
+  optText: { color: '#333', fontWeight: 'bold' },
   button: { backgroundColor: '#003366', padding: 12, borderRadius: 8, alignItems: 'center', marginBottom: 12 },
   btnText: { color: '#fff', fontWeight: 'bold' },
   sub: { fontSize: 18, fontWeight: '600', marginVertical: 8, color: '#333' },

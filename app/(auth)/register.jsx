@@ -82,11 +82,11 @@ export default function RegisterScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#003366', alignItems: 'center', justifyContent: 'center', padding: 20 },
-  title: { color: '#fff', fontSize: 24, fontWeight: 'bold', marginBottom: 30 },
-  input: { width: '100%', backgroundColor: '#fff', borderRadius: 8, padding: 12, marginBottom: 12 },
+  container: { flex: 1, backgroundColor: '#f5f6fa', alignItems: 'center', justifyContent: 'center', padding: 20 },
+  title: { color: '#003366', fontSize: 28, fontWeight: 'bold', marginBottom: 30 },
+  input: { width: '100%', backgroundColor: '#fff', borderRadius: 8, padding: 12, marginBottom: 12, borderWidth: 1, borderColor: '#ccc' },
   erro: { color: '#ff6666', marginBottom: 12, fontWeight: 'bold' },
-  button: { width: '100%', backgroundColor: '#007bff', padding: 12, borderRadius: 8, alignItems: 'center', marginBottom: 12 },
+  button: { width: '100%', backgroundColor: '#003366', padding: 12, borderRadius: 8, alignItems: 'center', marginBottom: 12 },
   buttonText: { color: '#fff', fontWeight: 'bold' },
-  link: { color: '#fff', textDecorationLine: 'underline', marginTop: 8 },
+  link: { color: '#0077cc', textDecorationLine: 'underline', marginTop: 8 },
 });
