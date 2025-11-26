@@ -61,14 +61,14 @@ export default function MovimentacaoScreen() {
       <TextInput style={styles.input} placeholder="Quantidade" value={quantidade} onChangeText={setQuantidade} keyboardType="numeric" />
 
       <View style={styles.row}>
-	      <TouchableOpacity style={[styles.option, categoriaId === 1 && styles.selected]} onPress={() => setCategoriaId(1)}><Text style={[styles.optText, categoriaId === 1 && { color: '#fff' }]}>Bebidas</Text></TouchableOpacity>
-	      <TouchableOpacity style={[styles.option, categoriaId === 2 && styles.selected]} onPress={() => setCategoriaId(2)}><Text style={[styles.optText, categoriaId === 2 && { color: '#fff' }]}>Perecíveis</Text></TouchableOpacity>
-	      <TouchableOpacity style={[styles.option, categoriaId === 3 && styles.selected]} onPress={() => setCategoriaId(3)}><Text style={[styles.optText, categoriaId === 3 && { color: '#fff' }]}>Não Perecíveis</Text></TouchableOpacity>
+	      <TouchableOpacity style={[styles.option, categoriaId === 1 && { backgroundColor: categoriaId === 1 ? '#0077cc' : '#fff', borderColor: categoriaId === 1 ? '#0077cc' : '#ccc' }]} onPress={() => setCategoriaId(1)}><Text style={[styles.optText, categoriaId === 1 && { color: '#fff' }]}>Bebidas</Text></TouchableOpacity>
+	      <TouchableOpacity style={[styles.option, categoriaId === 2 && { backgroundColor: categoriaId === 2 ? '#28a745' : '#fff', borderColor: categoriaId === 2 ? '#28a745' : '#ccc' }]} onPress={() => setCategoriaId(2)}><Text style={[styles.optText, categoriaId === 2 && { color: '#fff' }]}>Perecíveis</Text></TouchableOpacity>
+	      <TouchableOpacity style={[styles.option, categoriaId === 3 && { backgroundColor: categoriaId === 3 ? '#ffc107' : '#fff', borderColor: categoriaId === 3 ? '#ffc107' : '#ccc' }]} onPress={() => setCategoriaId(3)}><Text style={[styles.optText, categoriaId === 3 && { color: '#333' }]}>Não Perecíveis</Text></TouchableOpacity>
       </View>
 
       <View style={styles.row}>
-	        <TouchableOpacity style={[styles.option, tipo === 'entrada' && styles.selectedEntrada]} onPress={() => setTipo('entrada')}><Text style={[styles.optText, tipo === 'entrada' && { color: '#fff' }]}>Entrada</Text></TouchableOpacity>
-	        <TouchableOpacity style={[styles.option, tipo === 'saida' && styles.selectedSaida]} onPress={() => setTipo('saida')}><Text style={[styles.optText, tipo === 'saida' && { color: '#fff' }]}>Saída</Text></TouchableOpacity>
+	        <TouchableOpacity style={[styles.option, tipo === 'entrada' && { backgroundColor: tipo === 'entrada' ? '#28a745' : '#fff', borderColor: tipo === 'entrada' ? '#28a745' : '#ccc' }]} onPress={() => setTipo('entrada')}><Text style={[styles.optText, tipo === 'entrada' && { color: '#fff' }]}>Entrada</Text></TouchableOpacity>
+	        <TouchableOpacity style={[styles.option, tipo === 'saida' && { backgroundColor: tipo === 'saida' ? '#dc3545' : '#fff', borderColor: tipo === 'saida' ? '#dc3545' : '#ccc' }]} onPress={() => setTipo('saida')}><Text style={[styles.optText, tipo === 'saida' && { color: '#fff' }]}>Saída</Text></TouchableOpacity>
       </View>
 
       <TouchableOpacity style={styles.button} onPress={handleRegistrar}><Text style={styles.btnText}>Registrar</Text></TouchableOpacity>
@@ -90,9 +90,9 @@ const styles = StyleSheet.create({
   input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, marginBottom: 12, backgroundColor: '#fff' },
   row: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 },
   option: { flex: 1, marginHorizontal: 4, padding: 12, borderRadius: 8, borderWidth: 1, borderColor: '#ccc', alignItems: 'center', backgroundColor: '#fff' },
-  selected: { backgroundColor: '#003366', borderColor: '#003366' },
-  selectedEntrada: { backgroundColor: '#2ecc71' },
-  selectedSaida: { backgroundColor: '#e74c3c' },
+  selected: { backgroundColor: '#0077cc', borderColor: '#0077cc' },
+  selectedEntrada: { backgroundColor: '#28aa45', borderColor: '#28aa45' },
+  selectedSaida: { backgroundColor: '#dc3545', borderColor: '#dc3545' },
   optText: { color: '#333', fontWeight: 'bold' },
   button: { backgroundColor: '#003366', padding: 14, borderRadius: 8, alignItems: 'center', marginBottom: 16, marginTop: 10 },
   btnText: { color: '#fff', fontWeight: 'bold' },
