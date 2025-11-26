@@ -4,7 +4,6 @@ import { criarMovimentacao } from '../../services/movimentacaoService';
 import { useEstoque } from '../context/EstoqueContext';
 
 export default function MovimentacaoScreen() {
-  const { movimentacoes, adicionarMovimentacaoLocal, carregarMovimentacoesDoServidor } = useEstoque();
   const { bebidas, pereciveis, naoPereciveis, movimentacoes, adicionarMovimentacaoLocal, carregarMovimentacoesDoServidor } = useEstoque();
   const [produtoId, setProdutoId] = useState('');
   const [produtoNome, setProdutoNome] = useState('');
