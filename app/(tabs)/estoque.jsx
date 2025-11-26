@@ -2,11 +2,10 @@ import React, { useEffect } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useEstoque } from '../context/EstoqueContext';
 
-export default function EstoqueScreen({ navigation }) {
+export default function EstoqueScreen() {
   const { bebidas, pereciveis, naoPereciveis, carregarProdutosDoServidor } = useEstoque();
 
   useEffect(() => {
-    // recarrega produtos quando abrir tela
     carregarProdutosDoServidor();
   }, []);
 
@@ -14,16 +13,16 @@ export default function EstoqueScreen({ navigation }) {
     <View style={styles.container}>
       <Text style={styles.title}>Gerenciar Estoques</Text>
 
-      <TouchableOpacity style={[styles.button, { backgroundColor: '#0077cc' }]} onPress={() => navigation.navigate('Bebidas')}>
-        <Text style={styles.buttonText}>🍹 Estoque de Bebidas ({bebidas.length})</Text>
+      <TouchableOpacity style={[styles.button, { backgroundColor: '#0077cc' }]} onPress={() => {}}>
+        <Text style={styles.buttonText}>Estoque de Bebidas ({bebidas.length})</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={[styles.button, { backgroundColor: '#28a745' }]} onPress={() => navigation.navigate('Pereciveis')}>
-        <Text style={styles.buttonText}>🥫 Itens Perecíveis ({pereciveis.length})</Text>
+      <TouchableOpacity style={[styles.button, { backgroundColor: '#28a745' }]} onPress={() => {}}>
+        <Text style={styles.buttonText}>Itens Perecíveis ({pereciveis.length})</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={[styles.button, { backgroundColor: '#ffc107' }]} onPress={() => navigation.navigate('NaoPereciveis')}>
-        <Text style={styles.buttonText}>📦 Não Perecíveis ({naoPereciveis.length})</Text>
+      <TouchableOpacity style={[styles.button, { backgroundColor: '#ffc107' }]} onPress={() => {}}>
+        <Text style={styles.buttonText}>Não Perecíveis ({naoPereciveis.length})</Text>
       </TouchableOpacity>
     </View>
   );
