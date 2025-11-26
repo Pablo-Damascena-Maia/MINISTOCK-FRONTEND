@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import api from "../../services/api";
+import { registrarUsuario, fazerLogin, fazerLogout, obterSessaoAtual } from "../../services/authService";
+import { supabase } from "../../services/supabaseClient";
 
 export const AuthContext = createContext();
 
@@ -11,51 +11,61 @@ export function useAuth() {
 export function AuthProvider({ children }) {
   const [autenticado, setAutenticado] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    async function carregarToken() {
-      const token = await AsyncStorage.getItem("token");
-
-      if (token) {
-        api.defaults.headers.Authorization = `Bearer ${token}`;
-        setAutenticado(true);
+    async function verificarSessao() {
+      try {
+        const session = await obterSessaoAtual();
+        if (session?.user) {
+          setAutenticado(true);
+          setUser(session.user);
+        }
+      } catch (e) {
+        console.error("Erro ao verificar sessão:", e);
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
     }
 
-    carregarToken();
+    verificarSessao();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (session?.user) {
+          setAutenticado(true);
+          setUser(session.user);
+        } else {
+          setAutenticado(false);
+          setUser(null);
+        }
+      }
+    );
+
+    return () => {
+      if (authListener?.subscription) {
+        authListener.subscription.unsubscribe();
+      }
+    };
   }, []);
 
   async function login(email, senha) {
-    try {
-      const res = await api.post("/api/usuario/email", { email, senha });
-
-      const token = res.data.token;
-      await AsyncStorage.setItem("token", token);
-
-      api.defaults.headers.Authorization = `Bearer ${token}`;
+    const resultado = await fazerLogin(email, senha);
+    if (resultado.sucesso) {
       setAutenticado(true);
-
-      return { sucesso: true };
-    } catch (error) {
-      return { sucesso: false, erro: "Email ou senha incorretos" };
+      setUser(resultado.user);
     }
+    return resultado;
   }
 
   async function logout() {
-    await AsyncStorage.removeItem("token");
-    delete api.defaults.headers.Authorization;
+    await fazerLogout();
     setAutenticado(false);
+    setUser(null);
   }
 
-  async function register(dados) {
-    try {
-      await api.post("/api/usuario/criar", dados);
-      return { sucesso: true };
-    } catch (error) {
-      return { sucesso: false, erro: "Erro ao cadastrar usuário" };
-    }
+  async function register({ nome, email, senha }) {
+    return await registrarUsuario(nome, email, senha);
   }
 
   return (
@@ -65,6 +75,7 @@ export function AuthProvider({ children }) {
       login,
       logout,
       register,
+      user,
     }}>
       {children}
     </AuthContext.Provider>

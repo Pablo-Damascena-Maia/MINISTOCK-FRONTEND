@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { listarMovimentacoes } from '../../services/movimentacaoService';
-import { listarProdutos } from '../../services/produtoService';
+import { listarMovimentacoes: listarMovimentacoesSupabase } from '../../services/movimentacaoSupabaseService';
+import { listarProdutos: listarProdutosSupabase } from '../../services/produtoSupabaseService';
 
 const EstoqueContext = createContext();
 
@@ -36,23 +36,22 @@ export function EstoqueProvider({ children }) {
     }
   }
 
-  // Carrega produtos do backend e separa por categoria
   async function carregarProdutosDoServidor() {
     try {
       setLoading(true);
-      const res = await listarProdutos();
-      const lista = res.data || [];
+      const resultado = await listarProdutosSupabase();
+      const lista = resultado.dados || [];
       const b = [];
       const p = [];
       const np = [];
 
       lista.forEach((prod) => {
         const item = {
-          id: prod.id ?? prod.produtoId ?? Date.now().toString(),
-          nome: prod.nome ?? prod.descricao ?? 'Produto',
-          quantidade: typeof prod.quantidade === 'number' ? prod.quantidade : Number(prod.quantidade) || 0,
-          preco: prod.preco ?? prod.valor ?? 0,
-          categoria: prod.categoria ?? prod.categoriaProduto ?? 'naoPereciveis',
+          id: prod.id,
+          nome: prod.nome,
+          quantidade: prod.quantidade || 0,
+          preco: prod.preco || 0,
+          categoria: prod.categoria || 'naoPereciveis',
         };
         const cat = item.categoria.toLowerCase();
         if (cat.includes('bebida')) b.push(item);
@@ -72,8 +71,8 @@ export function EstoqueProvider({ children }) {
 
   async function carregarMovimentacoesDoServidor() {
     try {
-      const res = await listarMovimentacoes();
-      const list = res.data || [];
+      const resultado = await listarMovimentacoesSupabase();
+      const list = resultado.dados || [];
       setMovimentacoes(list);
     } catch (e) {
       console.warn('Erro carregar movs:', e);
