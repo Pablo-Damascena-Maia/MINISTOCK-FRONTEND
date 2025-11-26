@@ -5,11 +5,11 @@ export function criarProduto(data) {
 }
 
 export function atualizarProduto(data) {
-  return API.put("/api/produto/atualizar", data);
+  return API.put(`/api/produto/atualizar/${data.id}`, data);
 }
 
 export function atualizarProdutoStatus(id, status) {
-  return API.put(`/api/produto/atualizarStatus?id=${id}&status=${status}`);
+  return API.patch(`/api/produto/atualizarStatus/${id}`, { status });
 }
 
 export function listarProdutos() {
@@ -17,9 +17,9 @@ export function listarProdutos() {
 }
 
 export function listarProdutoPorId(id) {
-  return API.get(`/api/produto/listarPorId?id=${id}`);
+  return API.get(`/api/produto/listarPorId/${id}`);
 }
 
 export function apagarProduto(id) {
-  return API.delete(`/api/produto/apagar?id=${id}`);
+  return API.delete(`/api/produto/apagar/${id}`);
 }
