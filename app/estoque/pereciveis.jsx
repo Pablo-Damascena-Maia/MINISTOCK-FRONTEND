@@ -40,7 +40,7 @@ export default function PereciveisScreen() {
         descricao: product.descricao || '',
         quantidadeEstoque: String(product.quantidade || product.quantidadeEstoque || ''),
         codigoBarras: product.codigoBarras || '',
-        imagemUrl: product.imagemUrl || '',
+
       });
     } else {
       setEditMode(false);
@@ -50,7 +50,7 @@ export default function PereciveisScreen() {
         descricao: '',
         quantidadeEstoque: '',
         codigoBarras: '',
-        imagemUrl: '',
+
       });
     }
     setModalVisible(true);
@@ -74,7 +74,7 @@ export default function PereciveisScreen() {
         descricao: formData.descricao,
         quantidadeEstoque: parseInt(formData.quantidadeEstoque) || 0,
         codigoBarras: formData.codigoBarras,
-        imagemUrl: formData.imagemUrl,
+        imagemUrl: '',
         ativo: true,
         status: 1,
         categoria_produtoId: 2, // ID da categoria "Perecíveis" - ajustar conforme seu backend
@@ -235,12 +235,7 @@ export default function PereciveisScreen() {
               onChangeText={(text) => setFormData({ ...formData, codigoBarras: text })}
             />
 
-            <TextInput
-              style={styles.input}
-              placeholder="URL da Imagem"
-              value={formData.imagemUrl}
-              onChangeText={(text) => setFormData({ ...formData, imagemUrl: text })}
-            />
+
 
             <View style={styles.modalActions}>
               <TouchableOpacity

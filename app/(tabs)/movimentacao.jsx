@@ -5,9 +5,11 @@ import { useEstoque } from '../context/EstoqueContext';
 
 export default function MovimentacaoScreen() {
   const { movimentacoes, adicionarMovimentacaoLocal, carregarMovimentacoesDoServidor } = useEstoque();
-  const [produto, setProduto] = useState('');
+  const { bebidas, pereciveis, naoPereciveis, movimentacoes, adicionarMovimentacaoLocal, carregarMovimentacoesDoServidor } = useEstoque();
+  const [produtoId, setProdutoId] = useState('');
+  const [produtoNome, setProdutoNome] = useState('');
   const [quantidade, setQuantidade] = useState('');
-  const [categoria, setCategoria] = useState('bebidas');
+  const [categoriaId, setCategoriaId] = useState(1); // 1: Bebidas, 2: Pereciveis, 3: Nao Pereciveis
   const [tipo, setTipo] = useState('entrada');
 
   useEffect(() => {
@@ -15,7 +17,7 @@ export default function MovimentacaoScreen() {
   }, []);
 
   async function handleRegistrar() {
-    if (!produto || !quantidade || !categoria || !tipo) {
+    if (!produtoId || !quantidade || !categoriaId || !tipo) {
       Alert.alert('Erro', 'Preencha todos os campos.');
       return;
     }
@@ -25,17 +27,25 @@ export default function MovimentacaoScreen() {
       return;
     }
     const payload = {
-      produto: produto,
+      produtoId: produtoId,
       quantidade: qtd,
-      categoria,
-      tipo,
-      data: new Date().toISOString(),
+      tipoMovimentacao: tipo === 'entrada' ? 1 : 2, // 1: Entrada, 2: Saída
+      dataMovimentacao: new Date().toISOString(),
+      // Os campos abaixo são para o backend, mas o frontend precisa do nome e categoria para o contexto local
+      // O backend deve inferir a categoria pelo produtoId
     };
 
     try {
-      await criarMovimentacao(payload); // envia ao backend
-      adicionarMovimentacaoLocal({ ...payload, data: new Date().toLocaleString() }); // atualiza local
-      setProduto(''); setQuantidade('');
+      const res = await criarMovimentacao(payload); // envia ao backend
+      adicionarMovimentacaoLocal({
+        id: res.data.id,
+        produto: produtoNome,
+        quantidade: qtd,
+        categoria: categoriaId === 1 ? 'bebidas' : categoriaId === 2 ? 'pereciveis' : 'naoPereciveis',
+        tipo: tipo,
+        data: new Date().toLocaleString(),
+      }); // atualiza local
+      setProdutoId(''); setProdutoNome(''); setQuantidade('');
       Alert.alert('Sucesso', 'Movimentação registrada.');
     } catch (e) {
       console.warn(e);
@@ -47,13 +57,14 @@ export default function MovimentacaoScreen() {
     <View style={styles.container}>
       <Text style={styles.title}>Movimentações</Text>
 
-      <TextInput style={styles.input} placeholder="Nome do produto" value={produto} onChangeText={setProduto} />
+	  <TextInput style={styles.input} placeholder="ID do produto" value={produtoId} onChangeText={setProdutoId} keyboardType="numeric" />
+	  <TextInput style={styles.input} placeholder="Nome do produto (para histórico local)" value={produtoNome} onChangeText={setProdutoNome} />
       <TextInput style={styles.input} placeholder="Quantidade" value={quantidade} onChangeText={setQuantidade} keyboardType="numeric" />
 
       <View style={styles.row}>
-        <TouchableOpacity style={[styles.option, categoria === 'bebidas' && styles.selected]} onPress={() => setCategoria('bebidas')}><Text style={styles.optText}>Bebidas</Text></TouchableOpacity>
-        <TouchableOpacity style={[styles.option, categoria === 'pereciveis' && styles.selected]} onPress={() => setCategoria('pereciveis')}><Text style={styles.optText}>Perecíveis</Text></TouchableOpacity>
-        <TouchableOpacity style={[styles.option, categoria === 'naoPereciveis' && styles.selected]} onPress={() => setCategoria('naoPereciveis')}><Text style={styles.optText}>Não Perecíveis</Text></TouchableOpacity>
+	      <TouchableOpacity style={[styles.option, categoriaId === 1 && styles.selected]} onPress={() => setCategoriaId(1)}><Text style={styles.optText}>Bebidas</Text></TouchableOpacity>
+	      <TouchableOpacity style={[styles.option, categoriaId === 2 && styles.selected]} onPress={() => setCategoriaId(2)}><Text style={styles.optText}>Perecíveis</Text></TouchableOpacity>
+	      <TouchableOpacity style={[styles.option, categoriaId === 3 && styles.selected]} onPress={() => setCategoriaId(3)}><Text style={styles.optText}>Não Perecíveis</Text></TouchableOpacity>
       </View>
 
       <View style={styles.row}>

@@ -40,7 +40,7 @@ export default function BebidasScreen() {
         descricao: product.descricao || '',
         quantidadeEstoque: String(product.quantidade || product.quantidadeEstoque || ''),
         codigoBarras: product.codigoBarras || '',
-        imagemUrl: product.imagemUrl || '',
+
       });
     } else {
       setEditMode(false);
@@ -50,7 +50,7 @@ export default function BebidasScreen() {
         descricao: '',
         quantidadeEstoque: '',
         codigoBarras: '',
-        imagemUrl: '',
+
       });
     }
     setModalVisible(true);
@@ -74,7 +74,7 @@ export default function BebidasScreen() {
         descricao: formData.descricao,
         quantidadeEstoque: parseInt(formData.quantidadeEstoque) || 0,
         codigoBarras: formData.codigoBarras,
-        imagemUrl: formData.imagemUrl,
+        imagemUrl: '',
         ativo: true,
         status: 1,
         categoria_produtoId: 1, // ID da categoria "Bebidas" - ajustar conforme seu backend
@@ -235,12 +235,7 @@ export default function BebidasScreen() {
               onChangeText={(text) => setFormData({ ...formData, codigoBarras: text })}
             />
 
-            <TextInput
-              style={styles.input}
-              placeholder="URL da Imagem"
-              value={formData.imagemUrl}
-              onChangeText={(text) => setFormData({ ...formData, imagemUrl: text })}
-            />
+
 
             <View style={styles.modalActions}>
               <TouchableOpacity
