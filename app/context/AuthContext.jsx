@@ -14,7 +14,7 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     async function carregarToken() {
-      const token = await AsyncStorage.getItem("token");
+      const token = await AsyncStorage.getItem("@token");
 
       if (token) {
         api.defaults.headers.Authorization = `Bearer ${token}`;
@@ -32,7 +32,7 @@ export function AuthProvider({ children }) {
       const res = await api.post("/api/usuario/email", { email, senha });
 
       const token = res.data.token;
-      await AsyncStorage.setItem("token", token);
+      await AsyncStorage.setItem("@token", token);
 
       api.defaults.headers.Authorization = `Bearer ${token}`;
       setAutenticado(true);
@@ -44,7 +44,7 @@ export function AuthProvider({ children }) {
   }
 
   async function logout() {
-    await AsyncStorage.removeItem("token");
+    await AsyncStorage.removeItem("@token");
     delete api.defaults.headers.Authorization;
     setAutenticado(false);
   }
