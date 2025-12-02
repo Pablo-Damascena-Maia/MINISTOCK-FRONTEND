@@ -25,6 +25,7 @@ export default function PereciveisScreen() {
     quantidadeEstoque: '',
     codigoBarras: '',
     dataEntrada: "2025-12-02T14:59:51.544Z",
+    usuarioId: 2,
   });
 
   useEffect(() => {
@@ -77,6 +78,7 @@ export default function PereciveisScreen() {
         dataEntrada: "2025-12-02T14:59:51.544Z",
         ativo: true,
         status: 1,
+        usuarioId: 2,
         categoria_produtoId: 2, // ID da categoria "Perecíveis" - ajustar conforme seu backend
       };
 

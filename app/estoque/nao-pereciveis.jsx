@@ -24,7 +24,10 @@ export default function NaoPereciveisScreen() {
     descricao: '',
     quantidadeEstoque: '',
     dataEntrada: "2025-12-02T14:59:51.544Z",
+    usuarioId: 2,
+    
     codigoBarras: '',
+    categoria_produtoId: 1
     
   });
 
@@ -78,6 +81,7 @@ export default function NaoPereciveisScreen() {
         codigoBarras: '',
         ativo: true,
         status: 1,
+        usuarioId: 2,
         categoria_produtoId: 3, // ID da categoria "Não Perecíveis" - ajustar conforme seu backend
       };
 
