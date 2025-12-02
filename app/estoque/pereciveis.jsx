@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
+  ActivityIndicator,
+  Alert,
+  FlatList,
+  Modal,
   StyleSheet,
   Text,
-  View,
-  FlatList,
-  TouchableOpacity,
   TextInput,
-  Modal,
-  Alert,
-  ActivityIndicator,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import { useEstoque } from '../context/EstoqueContext';
-import { criarProduto, atualizarProduto, apagarProduto } from '../../services/produtoService';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { apagarProduto, atualizarProduto, criarProduto } from '../../services/produtoService';
+import { useEstoque } from '../context/EstoqueContext';
 
 export default function PereciveisScreen() {
   const { pereciveis, carregarProdutosDoServidor, loading } = useEstoque();
@@ -79,6 +79,7 @@ export default function PereciveisScreen() {
         status: 1,
         categoria_produtoId: 2, // ID da categoria "Perecíveis" - ajustar conforme seu backend
       };
+
 
       if (editMode && currentProduct) {
         await atualizarProduto({ ...payload, id: currentProduct.id });

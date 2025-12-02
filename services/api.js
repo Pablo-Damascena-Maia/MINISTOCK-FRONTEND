@@ -3,6 +3,7 @@ import axios from "axios";
 
 const api = axios.create({
   baseURL: "http://academico3.rj.senac.br/ministock",
+  //baseURL: "http://localhost:8404",
 });
 
 // Interceptor para adicionar o token em todas as requisições

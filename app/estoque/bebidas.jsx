@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
+  ActivityIndicator,
+  Alert,
+  FlatList,
+  Modal,
   StyleSheet,
   Text,
-  View,
-  FlatList,
-  TouchableOpacity,
   TextInput,
-  Modal,
-  Alert,
-  ActivityIndicator,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import { useEstoque } from '../context/EstoqueContext';
-import { criarProduto, atualizarProduto, apagarProduto } from '../../services/produtoService';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { apagarProduto, atualizarProduto, criarProduto } from '../../services/produtoService';
+import { useEstoque } from '../context/EstoqueContext';
 
 export default function BebidasScreen() {
   const { bebidas, carregarProdutosDoServidor, loading } = useEstoque();
@@ -24,7 +24,6 @@ export default function BebidasScreen() {
     descricao: '',
     quantidadeEstoque: '',
     codigoBarras: '',
-    imagemUrl: '',
   });
 
   useEffect(() => {
@@ -39,8 +38,9 @@ export default function BebidasScreen() {
         nome: product.nome || '',
         descricao: product.descricao || '',
         quantidadeEstoque: String(product.quantidade || product.quantidadeEstoque || ''),
-
-
+        dataEntrada: "2025-12-02T14:59:51.544Z",
+        usuarioId: 2,
+        categoria_produtoId: 1
       });
     } else {
       setEditMode(false);
@@ -49,8 +49,6 @@ export default function BebidasScreen() {
         nome: '',
         descricao: '',
         quantidadeEstoque: '',
-
-
       });
     }
     setModalVisible(true);
@@ -73,13 +71,14 @@ export default function BebidasScreen() {
         nome: formData.nome,
         descricao: formData.descricao,
         quantidadeEstoque: parseInt(formData.quantidadeEstoque) || 0,
+        dataEntrada: "2025-12-02T14:59:51.544Z",
         codigoBarras: '',
-        imagemUrl: '',
         ativo: true,
         status: 1,
-        categoria_produtoId: 1, // ID da categoria "Bebidas" - ajustar conforme seu backend
+        usuarioId: 2,
+        categoria_produtoId: 1
       };
-
+      
       if (editMode && currentProduct) {
         await atualizarProduto({ ...payload, id: currentProduct.id });
         Alert.alert('Sucesso', 'Produto atualizado com sucesso!');

@@ -1,6 +1,7 @@
 import API from "./api";
 
 export function criarProduto(data) {
+  console.log("Criando produto com dados:", data);
   return API.post("/api/produto/criar", data);
 }
 

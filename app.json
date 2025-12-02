@@ -19,8 +19,7 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false,
-      "package": "com.pabloxxzxx.MINISTOCK"
+      "predictiveBackGestureEnabled": false
     },
     "web": {
       "output": "static",
@@ -45,12 +44,6 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    },
-    "extra": {
-      "router": {},
-      "eas": {
-        "projectId": "95eae803-1d4c-4606-92b9-c4bba7549644"
-      }
     }
   }
 }
