@@ -23,8 +23,9 @@ export default function NaoPereciveisScreen() {
     nome: '',
     descricao: '',
     quantidadeEstoque: '',
+    dataEntrada: "2025-12-02T14:59:51.544Z",
     codigoBarras: '',
-    imagemUrl: '',
+    
   });
 
   useEffect(() => {
@@ -73,8 +74,8 @@ export default function NaoPereciveisScreen() {
         nome: formData.nome,
         descricao: formData.descricao,
         quantidadeEstoque: parseInt(formData.quantidadeEstoque) || 0,
+        dataEntrada: "2025-12-02T14:59:51.544Z",
         codigoBarras: '',
-        imagemUrl: '',
         ativo: true,
         status: 1,
         categoria_produtoId: 3, // ID da categoria "Não Perecíveis" - ajustar conforme seu backend
