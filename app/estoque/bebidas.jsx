@@ -1,18 +1,18 @@
-import { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  ActivityIndicator,
-  Alert,
-  FlatList,
-  Modal,
   StyleSheet,
   Text,
-  TextInput,
-  TouchableOpacity,
   View,
+  FlatList,
+  TouchableOpacity,
+  TextInput,
+  Modal,
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import { apagarProduto, atualizarProduto, criarProduto } from '../../services/produtoService';
 import { useEstoque } from '../context/EstoqueContext';
+import { criarProduto, atualizarProduto, apagarProduto } from '../../services/produtoService';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 export default function BebidasScreen() {
   const { bebidas, carregarProdutosDoServidor, loading } = useEstoque();
@@ -24,6 +24,7 @@ export default function BebidasScreen() {
     descricao: '',
     quantidadeEstoque: '',
     codigoBarras: '',
+    imagemUrl: '',
   });
 
   useEffect(() => {
@@ -38,9 +39,8 @@ export default function BebidasScreen() {
         nome: product.nome || '',
         descricao: product.descricao || '',
         quantidadeEstoque: String(product.quantidade || product.quantidadeEstoque || ''),
-        dataEntrada: "2025-12-02T14:59:51.544Z",
-        usuarioId: 2,
-        categoria_produtoId: 1
+
+
       });
     } else {
       setEditMode(false);
@@ -49,6 +49,8 @@ export default function BebidasScreen() {
         nome: '',
         descricao: '',
         quantidadeEstoque: '',
+
+
       });
     }
     setModalVisible(true);
@@ -71,18 +73,24 @@ export default function BebidasScreen() {
         nome: formData.nome,
         descricao: formData.descricao,
         quantidadeEstoque: parseInt(formData.quantidadeEstoque) || 0,
-        dataEntrada: "2025-12-02T14:59:51.544Z",
         codigoBarras: '',
+        imagemUrl: '',
         ativo: true,
         status: 1,
-        usuarioId: 2,
-        categoria_produtoId: 1
+        categoria_produtoId: 1, // ID da categoria "Bebidas" - ajustar conforme seu backend
       };
-      
-      if (editMode && currentProduct) {
-        await atualizarProduto({ ...payload, id: currentProduct.id });
-        Alert.alert('Sucesso', 'Produto atualizado com sucesso!');
-      } else {
+
+	      // Campos adicionais necessários para o backend (se não forem enviados, o backend pode dar 403)
+	      const requiredPayload = {
+	        ...payload,
+	        imagemDataEntrada: currentProduct?.imagemDataEntrada || '', // Garantir que o campo exista
+	        usuarioId: currentProduct?.usuarioId || 1, // Assumir um ID de usuário padrão se não estiver logado
+	      };
+	
+	      if (editMode && currentProduct) {
+	        await atualizarProduto({ ...requiredPayload, id: currentProduct.id });
+	        Alert.alert('Sucesso', 'Produto atualizado com sucesso!');
+	      } else {
         await criarProduto(payload);
         Alert.alert('Sucesso', 'Produto criado com sucesso!');
       }
@@ -106,7 +114,9 @@ export default function BebidasScreen() {
           style: 'destructive',
           onPress: async () => {
             try {
-              await apagarProduto(product.id);
+	              // O endpoint de apagar pode exigir o ID do usuário ou outros campos
+	              // Para garantir, vamos enviar o ID do produto e um ID de usuário padrão
+	              await apagarProduto(product.id, { usuarioId: product.usuarioId || 1 });
               Alert.alert('Sucesso', 'Produto excluído com sucesso!');
               carregarProdutosDoServidor();
             } catch (error) {
