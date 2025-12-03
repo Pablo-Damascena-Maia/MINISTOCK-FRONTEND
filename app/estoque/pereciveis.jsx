@@ -41,6 +41,10 @@ export default function PereciveisScreen() {
         nome: product.nome || '',
         descricao: product.descricao || '',
         quantidadeEstoque: String(product.quantidade || product.quantidadeEstoque || ''),
+        codigoBarras: product.codigoBarras || '',
+        imagemUrl: product.imagemUrl || '',
+        dataEntrada: product.dataEntrada || "2025-12-02T14:59:51.544Z",
+        usuarioId: product.usuarioId || 2,
 
 
       });
@@ -87,7 +91,7 @@ export default function PereciveisScreen() {
 	      // Campos adicionais necessários para o backend (se não forem enviados, o backend pode dar 403)
 	      const requiredPayload = {
 	        ...payload,
-	        imagemDataEntrada: currentProduct?.imagemDataEntrada || "", // Garantir que o campo exista
+	        dataEntrada: currentProduct?.dataEntrada || "", // Garantir que o campo exista
 	        usuarioId: currentProduct?.usuarioId || 1, // Assumir um ID de usuário padrão se não estiver logado
 	      };
 	

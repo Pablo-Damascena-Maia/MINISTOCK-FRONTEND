@@ -43,6 +43,11 @@ export default function NaoPereciveisScreen() {
         nome: product.nome || '',
         descricao: product.descricao || '',
         quantidadeEstoque: String(product.quantidade || product.quantidadeEstoque || ''),
+        dataEntrada: product.dataEntrada || "2025-12-02T14:59:51.544Z",
+        usuarioId: product.usuarioId || 2,
+        codigoBarras: product.codigoBarras || '',
+        categoria_produtoId: 1
+        
 
 
       });
@@ -53,6 +58,11 @@ export default function NaoPereciveisScreen() {
         nome: '',
         descricao: '',
         quantidadeEstoque: '',
+        dataEntrada: "2025-12-02T14:59:51.544Z",
+        usuarioId: 2,
+        codigoBarras: '',
+        categoria_produtoId: 1
+
 
 
       });
@@ -78,11 +88,10 @@ export default function NaoPereciveisScreen() {
         descricao: formData.descricao,
         quantidadeEstoque: parseInt(formData.quantidadeEstoque) || 0,
         dataEntrada: "2025-12-02T14:59:51.544Z",
-        codigoBarras: '',
-        ativo: true,
-        status: 1,
         usuarioId: 2,
-        categoria_produtoId: 3, // ID da categoria "Não Perecíveis" - ajustar conforme seu backend
+        
+        categoria_produtoId: 1, // ID da categoria "Não Perecíveis" - ajustar conforme seu backend
+        
       };
 
       if (editMode && currentProduct) {
