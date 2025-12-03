@@ -13,8 +13,8 @@ export function atualizarProdutoStatus(id, status) {
   return API.patch(`/api/produto/atualizarStatus/${id}`, { status });
 }
 
-export function listarProdutos() {
-  return API.get("/api/produto/listar");
+export function listarProdutos(idCategoria) {
+  return API.get(`/api/produto/listarPorCategoria/${idCategoria}`);
 }
 
 export function listarProdutoPorId(id) {
