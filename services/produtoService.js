@@ -20,6 +20,6 @@ export function listarProdutoPorId(id) {
   return API.get(`/api/produto/listarPorId/${id}`);
 }
 
-export function apagarProduto(id) {
-  return API.delete(`/api/produto/apagar/${id}`);
+export function apagarProduto(id, data = {}) {
+  return API.delete(`/api/produto/apagar/${id}`, { data });
 }

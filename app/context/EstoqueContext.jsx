@@ -54,10 +54,20 @@ export function EstoqueProvider({ children }) {
           preco: prod.preco ?? prod.valor ?? 0,
           categoria: prod.categoria ?? prod.categoriaProduto ?? 'naoPereciveis',
         };
-        const cat = item.categoria.toLowerCase();
-        if (cat.includes('bebida')) b.push(item);
-        else if (cat.includes('pereci')) p.push(item);
-        else np.push(item);
+	        // A categoria do produto no backend é um ID (1, 2, 3) ou um nome.
+	        // Vamos usar o ID da categoria para garantir a separação correta.
+	        const catId = prod.categoria_produtoId;
+	        if (catId === 1) b.push(item);
+	        else if (catId === 2) p.push(item);
+	        else if (catId === 3) np.push(item);
+	        else np.push(item); // Fallback para não perecíveis se o ID for desconhecido
+	
+	        // Se o backend retornar o nome da categoria em vez do ID,
+	        // podemos usar a lógica anterior como fallback, mas o ID é mais confiável.
+	        // const cat = item.categoria.toLowerCase();
+	        // if (cat.includes('bebida')) b.push(item);
+	        // else if (cat.includes('pereci')) p.push(item);
+	        // else np.push(item);
       });
 
       setBebidas(b);

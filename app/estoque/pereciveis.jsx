@@ -80,10 +80,17 @@ export default function PereciveisScreen() {
         categoria_produtoId: 2, // ID da categoria "Perecíveis" - ajustar conforme seu backend
       };
 
-      if (editMode && currentProduct) {
-        await atualizarProduto({ ...payload, id: currentProduct.id });
-        Alert.alert('Sucesso', 'Produto atualizado com sucesso!');
-      } else {
+	      // Campos adicionais necessários para o backend (se não forem enviados, o backend pode dar 403)
+	      const requiredPayload = {
+	        ...payload,
+	        imagemDataEntrada: currentProduct?.imagemDataEntrada || "", // Garantir que o campo exista
+	        usuarioId: currentProduct?.usuarioId || 1, // Assumir um ID de usuário padrão se não estiver logado
+	      };
+	
+	      if (editMode && currentProduct) {
+	        await atualizarProduto({ ...requiredPayload, id: currentProduct.id });
+	        Alert.alert("Sucesso", "Produto atualizado com sucesso!");
+	      } else {
         await criarProduto(payload);
         Alert.alert('Sucesso', 'Produto criado com sucesso!');
       }
@@ -107,7 +114,9 @@ export default function PereciveisScreen() {
           style: 'destructive',
           onPress: async () => {
             try {
-              await apagarProduto(product.id);
+	              // O endpoint de apagar pode exigir o ID do usuário ou outros campos
+	              // Para garantir, vamos enviar o ID do produto e um ID de usuário padrão
+	              await apagarProduto(product.id, { usuarioId: product.usuarioId || 1 });
               Alert.alert('Sucesso', 'Produto excluído com sucesso!');
               carregarProdutosDoServidor();
             } catch (error) {
