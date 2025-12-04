@@ -25,6 +25,8 @@ export default function PereciveisScreen() {
     quantidadeEstoque: '',
     codigoBarras: '',
     imagemUrl: '',
+    dataEntrada: "2025-12-02T14:59:51.544Z",
+    usuarioId: 2,
   });
 
   useEffect(() => {
@@ -39,6 +41,10 @@ export default function PereciveisScreen() {
         nome: product.nome || '',
         descricao: product.descricao || '',
         quantidadeEstoque: String(product.quantidade || product.quantidadeEstoque || ''),
+        codigoBarras: product.codigoBarras || '',
+        imagemUrl: product.imagemUrl || '',
+        dataEntrada: product.dataEntrada || "2025-12-02T14:59:51.544Z",
+        usuarioId: product.usuarioId || 2,
 
 
       });
@@ -77,38 +83,33 @@ export default function PereciveisScreen() {
         imagemUrl: '',
         ativo: true,
         status: 1,
+        dataEntrada: "2025-12-02T14:59:51.544Z",
+        usuarioId: 2,
         categoria_produtoId: 2, // ID da categoria "Perecíveis" - ajustar conforme seu backend
       };
 
 	      // Campos adicionais necessários para o backend (se não forem enviados, o backend pode dar 403)
 	      const requiredPayload = {
 	        ...payload,
-	        imagemDataEntrada: currentProduct?.imagemDataEntrada || "", // Garantir que o campo exista
-	        usuarioId: currentProduct?.usuarioId || 1, // Assumir um ID de usuário padrão se não estiver logado
-	      };
-	
-	      // Campos adicionais necessários para o backend (se não forem enviados, o backend pode dar 403)
-	      const requiredPayload = {
-	        ...payload,
-	        imagemDataEntrada: currentProduct?.imagemDataEntrada || '', // Garantir que o campo exista
+	        dataEntrada: currentProduct?.dataEntrada || "", // Garantir que o campo exista
 	        usuarioId: currentProduct?.usuarioId || 1, // Assumir um ID de usuário padrão se não estiver logado
 	      };
 	
 	      if (editMode && currentProduct) {
 	        await atualizarProduto({ ...requiredPayload, id: currentProduct.id });
-	        Alert.alert('Sucesso', 'Produto atualizado com sucesso!');
+	        Alert.alert("Sucesso", "Produto atualizado com sucesso!");
 	      } else {
-	        await criarProduto(payload);
-	        Alert.alert('Sucesso', 'Produto criado com sucesso!');
-	      }
-	
-	      handleCloseModal();
-	      carregarProdutosDoServidor();
-	    } catch (error) {
-	      console.error('Erro ao salvar produto:', error);
-	      Alert.alert('Erro', 'Não foi possível salvar o produto');
-	    }
-	  };
+        await criarProduto(payload);
+        Alert.alert('Sucesso', 'Produto criado com sucesso!');
+      }
+
+      handleCloseModal();
+      carregarProdutosDoServidor();
+    } catch (error) {
+      console.error('Erro ao salvar produto:', error);
+      Alert.alert('Erro', 'Não foi possível salvar o produto');
+    }
+  };
 
   const handleDelete = (product) => {
     Alert.alert(
@@ -122,9 +123,8 @@ export default function PereciveisScreen() {
           onPress: async () => {
             try {
 	              // O endpoint de apagar pode exigir o ID do usuário ou outros campos
-	              // Para garantir, vamos enviar o ID do produto e um ID de usuário padrã	              // O endpoint de apagar pode exigir o ID do usuário ou outros campos
 	              // Para garantir, vamos enviar o ID do produto e um ID de usuário padrão
-	              await apagarProduto(product.id, { usuarioId: product.usuarioId || 1 });, { usuarioId: product.usuarioId || 1 });
+	              await apagarProduto(product.id, { usuarioId: product.usuarioId || 1 });
               Alert.alert('Sucesso', 'Produto excluído com sucesso!');
               carregarProdutosDoServidor();
             } catch (error) {
