@@ -40,7 +40,7 @@ export function EstoqueProvider({ children }) {
   async function carregarProdutosDoServidor() {
     try {
       setLoading(true);
-      const res = await listarProdutos(); 
+      const res = await listarProdutos();
       const lista = res.data || [];
       const b = [];
       const p = [];
@@ -52,15 +52,16 @@ export function EstoqueProvider({ children }) {
           nome: prod.nome ?? prod.descricao ?? 'Produto',
           quantidade: typeof prod.quantidade === 'number' ? prod.quantidade : Number(prod.quantidade) || 0,
           preco: prod.preco ?? prod.valor ?? 0,
-          categoria: prod.categoria ?? prod.categoriaProduto ?? 'bebidas',
+          categoria: prod.categoria ?? prod.categoriaProduto ?? 'naoPereciveis',
         };
-        
+	        // Usar o ID da categoria para garantir a separação correta
 	        const catId = prod.categoria_produtoId;
-	        if (catId === 1) b.push(item);
-	        else if (catId === 2) p.push(item);
-	        else if (catId === 3) np.push(item);
+	        if (catId === 1) b.push(item); // Bebidas
+	        else if (catId === 2) p.push(item); // Perecíveis
+	        else if (catId === 3) np.push(item); // Não Perecíveis
 	        else np.push(item); // Fallback para não perecíveis se o ID for desconhecido
-      });      
+      });
+
       setBebidas(b);
       setPereciveis(p);
       setNaoPereciveis(np);

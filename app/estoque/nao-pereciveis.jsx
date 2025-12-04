@@ -23,12 +23,8 @@ export default function NaoPereciveisScreen() {
     nome: '',
     descricao: '',
     quantidadeEstoque: '',
-    dataEntrada: "2025-12-02T14:59:51.544Z",
-    usuarioId: 2,
-    
     codigoBarras: '',
-    categoria_produtoId: 1
-    
+    imagemUrl: '',
   });
 
   useEffect(() => {
@@ -43,11 +39,6 @@ export default function NaoPereciveisScreen() {
         nome: product.nome || '',
         descricao: product.descricao || '',
         quantidadeEstoque: String(product.quantidade || product.quantidadeEstoque || ''),
-        dataEntrada: product.dataEntrada || "2025-12-02T14:59:51.544Z",
-        usuarioId: product.usuarioId || 2,
-        codigoBarras: product.codigoBarras || '',
-        categoria_produtoId: 1
-        
 
 
       });
@@ -58,11 +49,6 @@ export default function NaoPereciveisScreen() {
         nome: '',
         descricao: '',
         quantidadeEstoque: '',
-        dataEntrada: "2025-12-02T14:59:51.544Z",
-        usuarioId: 2,
-        codigoBarras: '',
-        categoria_produtoId: 1
-
 
 
       });
@@ -87,28 +73,35 @@ export default function NaoPereciveisScreen() {
         nome: formData.nome,
         descricao: formData.descricao,
         quantidadeEstoque: parseInt(formData.quantidadeEstoque) || 0,
-        dataEntrada: "2025-12-02T14:59:51.544Z",
-        usuarioId: 2,
-        
-        categoria_produtoId: 1, // ID da categoria "Não Perecíveis" - ajustar conforme seu backend
-        
+        codigoBarras: '',
+        imagemUrl: '',
+        ativo: true,
+        status: 1,
+        categoria_produtoId: 3, // ID da categoria "Não Perecíveis" - ajustar conforme seu backend
       };
 
-      if (editMode && currentProduct) {
-        await atualizarProduto({ ...payload, id: currentProduct.id });
-        Alert.alert('Sucesso', 'Produto atualizado com sucesso!');
-      } else {
-        await criarProduto(payload);
-        Alert.alert('Sucesso', 'Produto criado com sucesso!');
-      }
-
-      handleCloseModal();
-      carregarProdutosDoServidor();
-    } catch (error) {
-      console.error('Erro ao salvar produto:', error);
-      Alert.alert('Erro', 'Não foi possível salvar o produto');
-    }
-  };
+	      // Campos adicionais necessários para o backend (se não forem enviados, o backend pode dar 403)
+	      const requiredPayload = {
+	        ...payload,
+	        imagemDataEntrada: currentProduct?.imagemDataEntrada || '', // Garantir que o campo exista
+	        usuarioId: currentProduct?.usuarioId || 1, // Assumir um ID de usuário padrão se não estiver logado
+	      };
+	
+	      if (editMode && currentProduct) {
+	        await atualizarProduto({ ...requiredPayload, id: currentProduct.id });
+	        Alert.alert('Sucesso', 'Produto atualizado com sucesso!');
+	      } else {
+	        await criarProduto(payload);
+	        Alert.alert('Sucesso', 'Produto criado com sucesso!');
+	      }
+	
+	      handleCloseModal();
+	      carregarProdutosDoServidor();
+	    } catch (error) {
+	      console.error('Erro ao salvar produto:', error);
+	      Alert.alert('Erro', 'Não foi possível salvar o produto');
+	    }
+	  };
 
   const handleDelete = (product) => {
     Alert.alert(
@@ -121,7 +114,9 @@ export default function NaoPereciveisScreen() {
           style: 'destructive',
           onPress: async () => {
             try {
-              await apagarProduto(product.id);
+	              // O endpoint de apagar pode exigir o ID do usuário ou outros campos
+	              // Para garantir, vamos enviar o ID do produto e um ID de usuário padrão
+	              await apagarProduto(product.id, { usuarioId: product.usuarioId || 1 });
               Alert.alert('Sucesso', 'Produto excluído com sucesso!');
               carregarProdutosDoServidor();
             } catch (error) {
