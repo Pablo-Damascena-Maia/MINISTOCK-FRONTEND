@@ -1,0 +1,110 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f5f6fa;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    max-width: 450px;
+    width: 90%;
+    text-align: center;
+}
+
+header {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.logo {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 10px;
+    /* Adicione um ícone ou imagem de logo real aqui */
+    background-color: #003366; 
+    border-radius: 50%;
+    display: block;
+    margin: 0 auto 10px;
+}
+
+header h1 {
+    color: #003366;
+    font-size: 28px;
+    margin: 0;
+}
+
+header p {
+    color: #666;
+    font-size: 16px;
+    margin-top: 5px;
+}
+
+.download-section {
+    margin-bottom: 30px;
+}
+
+.download-section h2 {
+    color: #0077cc;
+    font-size: 22px;
+    margin-bottom: 15px;
+}
+
+.download-section p {
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.download-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #28a745; /* Cor de Sucesso/Download */
+    color: #fff;
+    text-decoration: none;
+    padding: 15px 30px;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.4);
+}
+
+.download-button:hover {
+    background-color: #1e7e34;
+}
+
+.download-button .icon {
+    font-style: normal;
+    margin-right: 10px;
+    font-size: 20px;
+}
+
+.version-info {
+    font-size: 14px;
+    color: #999;
+    margin-top: 20px;
+}
+
+
+
+footer {
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+    margin-top: 20px;
+}
+
+footer p {
+    font-size: 12px;
+    color: #aaa;
+}
