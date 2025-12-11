@@ -19,6 +19,8 @@ export default function BebidasScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [currentProduct, setCurrentProduct] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
   const [formData, setFormData] = useState({
     nome: '',
     descricao: '',
@@ -66,10 +68,11 @@ export default function BebidasScreen() {
 
   const handleSave = async () => {
     if (!formData.nome.trim()) {
-      Alert.alert('Erro', 'O nome do produto é obrigatório');
+      Alert.alert('Erro', 'O nome do produto e obrigatorio');
       return;
     }
 
+    setSaving(true);
     try {
       const payload = {
         nome: formData.nome,
@@ -84,26 +87,40 @@ export default function BebidasScreen() {
         categoria_produtoId: 1, // ID da categoria "Bebidas" - ajustar conforme seu backend
       };
 
-	      // Campos adicionais necessários para o backend (se não forem enviados, o backend pode dar 403)
-	      const requiredPayload = {
-	        ...payload,
-	        imagemDataEntrada: currentProduct?.imagemDataEntrada || '', // Garantir que o campo exista
-	        usuarioId: currentProduct?.usuarioId || 1, // Assumir um ID de usuário padrão se não estiver logado
-	      };
-	
-	      if (editMode && currentProduct) {
-	        await atualizarProduto({ ...requiredPayload, id: currentProduct.id });
-	        Alert.alert('Sucesso', 'Produto atualizado com sucesso!');
-	      } else {
-        await criarProduto(payload);
-        Alert.alert('Sucesso', 'Produto criado com sucesso!');
+      // Campos adicionais necessarios para o backend (se n?o forem enviados, o backend pode dar 403)
+      const requiredPayload = {
+        ...payload,
+        imagemDataEntrada: currentProduct?.imagemDataEntrada || '', // Garantir que o campo exista
+        usuarioId: currentProduct?.usuarioId || 1, // Assumir um ID de usuario padrao se nao estiver logado
+      };
+
+      if (editMode && currentProduct) {
+        await atualizarProduto({
+          ...requiredPayload,
+          id: currentProduct.id,
+          quantidade: requiredPayload.quantidadeEstoque, // alguns backends esperam "quantidade"
+          categoria_produtoId: 1,
+        });
+        Alert.alert('Sucesso', 'Produto atualizado com sucesso!');
+        await carregarProdutosDoServidor();
+        handleCloseModal();
+        return;
       }
 
-      handleCloseModal();
-      carregarProdutosDoServidor();
+      await criarProduto(payload);
+      await carregarProdutosDoServidor();
+      handleCloseModal(); // fecha o modal para nao reabrir cadastro
+      Alert.alert('Bebida cadastrada', `A bebida "${formData.nome}" foi cadastrada com sucesso!`);
     } catch (error) {
       console.error('Erro ao salvar produto:', error);
-      Alert.alert('Erro', 'Não foi possível salvar o produto');
+      const message =
+        error?.response?.data?.message ||
+        error?.response?.data?.mensagem ||
+        error?.message ||
+        'Nao foi possivel salvar o produto';
+      Alert.alert('Erro', message);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -118,15 +135,25 @@ export default function BebidasScreen() {
           style: 'destructive',
           onPress: async () => {
             try {
+              setDeletingId(product.id);
 	              // O endpoint de apagar pode exigir o ID do usuário ou outros campos
 	              // Para garantir, vamos enviar o ID do produto e um ID de usuário padrão
-	              await apagarProduto(product.id, { usuarioId: product.usuarioId || 1 });
+              await apagarProduto(product.id, {
+                usuarioId: product.usuarioId || 1,
+                categoria_produtoId: 1,
+              });
               Alert.alert('Sucesso', 'Produto excluído com sucesso!');
               carregarProdutosDoServidor();
             } catch (error) {
               console.error('Erro ao excluir produto:', error);
-              Alert.alert('Erro', 'Não foi possível excluir o produto');
+              const message =
+                error?.response?.data?.message ||
+                error?.response?.data?.mensagem ||
+                error?.message ||
+                'Não foi possível excluir o produto';
+              Alert.alert('Erro', message);
             }
+            setDeletingId(null);
           },
         },
       ]
@@ -148,12 +175,14 @@ export default function BebidasScreen() {
           <TouchableOpacity
             style={[styles.actionButton, { backgroundColor: '#ffc107' }]}
             onPress={() => handleOpenModal(item)}
+            disabled={saving || deletingId === item.id}
           >
             <Ionicons name="pencil" size={20} color="#fff" />
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.actionButton, { backgroundColor: '#dc3545' }]}
             onPress={() => handleDelete(item)}
+            disabled={saving || deletingId === item.id}
           >
             <Ionicons name="trash" size={20} color="#fff" />
           </TouchableOpacity>
@@ -253,8 +282,9 @@ export default function BebidasScreen() {
               <TouchableOpacity
                 style={[styles.modalButton, styles.saveButton]}
                 onPress={handleSave}
+                disabled={saving}
               >
-                <Text style={styles.buttonText}>Salvar</Text>
+                <Text style={styles.buttonText}>{saving ? 'Salvando...' : 'Salvar'}</Text>
               </TouchableOpacity>
             </View>
           </View>
